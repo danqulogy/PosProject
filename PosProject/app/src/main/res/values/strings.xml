@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PosProject</string>
+    <string name="temp">TEMP</string>
 </resources>
