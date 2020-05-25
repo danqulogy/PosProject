@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/main_menu_settings"
-        android:title="@string/main_menu_settings" />
+        android:icon="@drawable/ic_menu_icon"
+        android:menuCategory="container"
+        android:title="@string/placeholder"
+        android:visible="true"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/main_menu_reservations"
+                android:title="@string/myReservations" />
+            <item
+                android:id="@+id/main_menu_favPlac"
+                android:title="@string/favouritePlaces" />
+            <item
+                android:id="@+id/main_menu_settings"
+                android:icon="@drawable/ic_menu_icon_dark"
+                android:title="@string/settings"
+                app:showAsAction="ifRoom" />
+        </menu>
+    </item>
 </menu>
