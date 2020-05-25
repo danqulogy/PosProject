@@ -16,7 +16,7 @@
                 android:title="@string/favouritePlaces" />
             <item
                 android:id="@+id/main_menu_settings"
-                android:icon="@drawable/ic_menu_icon_dark"
+                android:icon="@drawable/ic_settings_icon_dark"
                 android:title="@string/settings"
                 app:showAsAction="ifRoom" />
         </menu>
