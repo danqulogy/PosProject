@@ -9,7 +9,6 @@ import java.util.List;
 
 @RepositoryRestResource(collectionResourceRel = "tables", path = "tables")
 public interface TableRepository extends MongoRepository<Table, String> {
-    public List<Table> findByChairsAvailible(@Param("chairsAvailible") String chairsAvailible);
-
+    public List<Table> findByChairsAvailable(@Param("chairsAvailable") String chairsAvailable);
     public Table findByTableNumber(@Param("tableNumber") String tableNumber);
 }
