@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppConfig {
 
+    public static final String DATE_PATTERN = "dd.MM.yyyy hh:mm";
+
     public @Bean MongoClient mongoClient(){
         return MongoClients.create("mongodb://localhost:27017");
     }
