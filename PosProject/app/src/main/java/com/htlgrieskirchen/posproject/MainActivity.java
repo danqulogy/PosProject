@@ -14,12 +14,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.htlgrieskirchen.posproject.activities.DetailActivity;
+import com.htlgrieskirchen.posproject.beans.Restaurant;
+import com.htlgrieskirchen.posproject.fragments.DetailFragment;
+import com.htlgrieskirchen.posproject.interfaces.OnSelectionChangedListener;
 import com.htlgrieskirchen.posproject.settings.SettingsActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener {
 
     private SharedPreferences prefs;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+    private DetailFragment detailFragment;
+    private boolean showDetail = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Config.RQ_FINE_LOCATION);
         }
+
+        detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.detailFrag);
+        showDetail = detailFragment != null && detailFragment.isInLayout();
     }
 
     @Override
@@ -73,5 +82,16 @@ public class MainActivity extends AppCompatActivity {
         if(key.equals("themes")){
             int theme = Integer.parseInt(sharedPreferences.getString(key, 0+""));
         }
+    }
+
+    @Override
+    public void onSelectionChanged(Restaurant restaurant) {
+        if(showDetail) detailFragment.showInformation(restaurant);
+        else callActivity(restaurant);
+    }
+
+    private void callActivity(Restaurant restaurant){
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra("restaurant", restaurant);
     }
 }

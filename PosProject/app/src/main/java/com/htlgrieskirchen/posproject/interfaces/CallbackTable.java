@@ -1,4 +1,4 @@
-package com.htlgrieskirchen.posproject.callbacks;
+package com.htlgrieskirchen.posproject.interfaces;
 
 import com.htlgrieskirchen.posproject.beans.Table;
 

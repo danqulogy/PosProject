@@ -17,8 +17,8 @@ public class Config {
 
     //  *RESERVATION URL*   //
     //URL for reservations on a table in a restaurant
-    public static String RESERVATION_URL1 = "reservations/getReservationsForTable?restaurantNumber=";
-    public static String RESERVATION_URL2 = "&tableNumber=1";
+    public static String RESERVATION_RESERVATIONSFORTABLE_URL1 = "reservations/getReservationsForTable?restaurantNumber=";
+    public static String RESERVATION_RESERVATIONSFORTABLE_URL2 = "&tableNumber=1";
     //URL for adding reservation on a table
     public static String RESERVATION_ADD_URL = "";
 
@@ -34,8 +34,8 @@ public class Config {
     public static String RESTAURANT_GETALL_URL = "restaurants/getAllRestaurants";
 
     //URL for nearest restaurants
-    public static String RESTAURANT_URL1 = "restaurants/getTenNearestRestaurants?lon=";
-    public static String RESTAURANT_URL2 = "&lat=";
+    public static String RESTAURANT_NEAREST_URL1 = "restaurants/getTenNearestRestaurants?lon=";
+    public static String RESTAURANT_NEAREST_URL2 = "&lat=";
     public static String RESTAURANT_URL_DISTANCE = "&distance"; //distance in metres
 
     //URL for put dbid
