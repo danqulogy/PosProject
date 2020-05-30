@@ -21,25 +21,27 @@ import com.htlgrieskirchen.posproject.interfaces.CallbackRestaurant;
 import com.htlgrieskirchen.posproject.interfaces.OnSelectionChangedListener;
 import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainFragment extends Fragment implements CallbackRestaurant {
 
     private CallbackRestaurant callback = this;
     private ListView listView;
-    private List<Restaurant> restaurants;
+    private List<Restaurant> restaurants = new ArrayList<>();
     private OnSelectionChangedListener listener;
+    private MainLVAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.fragment_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
         initializeView(view);
 
         return view;
     }
 
-    private void initializeView(View view){
-        listView = view.findViewById(R.id.main_fragment_listview);
+    private void initializeView(View givenView){
+        listView = givenView.findViewById(R.id.main_fragment_listview);
         RestaurantTask restaurantTask = new RestaurantTask(callback);
         restaurantTask.execute("NEAREST", "13.9", "48.0000", "10000");
     }
@@ -57,7 +59,7 @@ public class MainFragment extends Fragment implements CallbackRestaurant {
     @Override
     public void onSuccess(List<Restaurant> restaurants) {
         this.restaurants = restaurants;
-        MainLVAdapter adapter = new MainLVAdapter(getActivity(), R.layout.main_fragment_lv_item, restaurants);
+        adapter = new MainLVAdapter(getActivity(), R.layout.main_fragment_lv_item, restaurants);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener((parent, view, position, id) -> listener.onSelectionChanged(restaurants.get(position)));
     }

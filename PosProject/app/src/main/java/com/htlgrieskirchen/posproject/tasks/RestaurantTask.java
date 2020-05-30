@@ -4,14 +4,25 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.htlgrieskirchen.posproject.Config;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
 import com.htlgrieskirchen.posproject.interfaces.CallbackRestaurant;
 
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.List;
 
 public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> {
@@ -46,13 +57,13 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
                     sb.append((char) x);
                 }
 
-                Gson gson = new Gson();
+                Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(),DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
                 TypeToken<List<Restaurant>> typeToken = new TypeToken<List<Restaurant>>(){};
-                List<Restaurant> restaurants = gson.fromJson(sb.toString(), typeToken.getType());
 
-                return restaurants;
+                return gson.fromJson(sb.toString(), typeToken.getType());
             }catch (Exception e){
                 Log.e("doInBackground-nearestRestaurant", "GETTING failed with connection; Error-Massage: "+e.getMessage());
+                e.printStackTrace();
             }
         }
 

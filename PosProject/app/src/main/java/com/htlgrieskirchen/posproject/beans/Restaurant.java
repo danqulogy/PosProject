@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Restaurant implements Parcelable{
 
-    private int id;
+    private String id;
     private int restaurantNumber;
     private double lon;
     private double lat;
@@ -18,7 +18,7 @@ public class Restaurant implements Parcelable{
     public Restaurant() {
     }
 
-    public Restaurant(int id, int restaurantNumber, double lon, double lat, String name, List<Table> tables) {
+    public Restaurant(String id, int restaurantNumber, double lon, double lat, String name, List<Table> tables) {
         this.id = id;
         this.restaurantNumber = restaurantNumber;
         this.lon = lon;
@@ -28,7 +28,7 @@ public class Restaurant implements Parcelable{
     }
 
     protected Restaurant(Parcel in) {
-        id = in.readInt();
+        id = in.readString();
         restaurantNumber = in.readInt();
         lon = in.readDouble();
         lat = in.readDouble();
@@ -48,11 +48,11 @@ public class Restaurant implements Parcelable{
         }
     };
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -103,7 +103,7 @@ public class Restaurant implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeString(id);
         dest.writeInt(restaurantNumber);
         dest.writeDouble(lon);
         dest.writeDouble(lat);
