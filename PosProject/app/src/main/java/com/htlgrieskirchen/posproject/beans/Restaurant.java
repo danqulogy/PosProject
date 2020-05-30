@@ -6,24 +6,33 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Restaurant implements Parcelable {
+public class Restaurant implements Parcelable{
 
-    private String name;
+    private int id;
+    private int restaurantNumber;
     private double lon;
     private double lat;
+    private String name;
     private List<Table> tables;
 
-    public Restaurant(String name, double lon, double lat, List<Table> tables) {
-        this.name = name;
+    public Restaurant() {
+    }
+
+    public Restaurant(int id, int restaurantNumber, double lon, double lat, String name, List<Table> tables) {
+        this.id = id;
+        this.restaurantNumber = restaurantNumber;
         this.lon = lon;
         this.lat = lat;
+        this.name = name;
         this.tables = tables;
     }
 
     protected Restaurant(Parcel in) {
-        name = in.readString();
+        id = in.readInt();
+        restaurantNumber = in.readInt();
         lon = in.readDouble();
         lat = in.readDouble();
+        name = in.readString();
         tables = in.readParcelableList(new ArrayList<>(), Table.class.getClassLoader());
     }
 
@@ -39,12 +48,20 @@ public class Restaurant implements Parcelable {
         }
     };
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getRestaurantNumber() {
+        return restaurantNumber;
+    }
+
+    public void setRestaurantNumber(int restaurantNumber) {
+        this.restaurantNumber = restaurantNumber;
     }
 
     public double getLon() {
@@ -63,6 +80,14 @@ public class Restaurant implements Parcelable {
         this.lat = lat;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<Table> getTables() {
         return tables;
     }
@@ -78,9 +103,11 @@ public class Restaurant implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
+        dest.writeInt(id);
+        dest.writeInt(restaurantNumber);
         dest.writeDouble(lon);
         dest.writeDouble(lat);
+        dest.writeString(name);
         dest.writeParcelableList(tables, flags);
     }
 }

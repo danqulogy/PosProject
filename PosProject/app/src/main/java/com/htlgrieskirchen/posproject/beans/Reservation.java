@@ -6,23 +6,32 @@ import android.os.Parcelable;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Reservation implements Parcelable {
+public class Reservation implements Parcelable{
 
-    private String reservationNumber;
+    private int restaurantNumber;
+    private int tableNumber;
+    private String id;
+    private int chairs;
     private LocalDateTime reservationStart;
-    private LocalDateTime  reservationEnd;
+    private LocalDateTime reservationEnd;
 
     public Reservation() {
     }
 
-    public Reservation(String reservationNumber, LocalDateTime reservationStart, LocalDateTime reservationEnd) {
-        this.reservationNumber = reservationNumber;
+    public Reservation(int restaurantNumber, int tableNumber, String id, int chairs, LocalDateTime reservationStart, LocalDateTime reservationEnd) {
+        this.restaurantNumber = restaurantNumber;
+        this.tableNumber = tableNumber;
+        this.id = id;
+        this.chairs = chairs;
         this.reservationStart = reservationStart;
         this.reservationEnd = reservationEnd;
     }
 
     protected Reservation(Parcel in) {
-        reservationNumber = in.readString();
+        restaurantNumber = in.readInt();
+        tableNumber = in.readInt();
+        id = in.readString();
+        chairs = in.readInt();
         reservationStart = (LocalDateTime) in.readSerializable();
         reservationEnd = (LocalDateTime) in.readSerializable();
     }
@@ -39,12 +48,36 @@ public class Reservation implements Parcelable {
         }
     };
 
-    public String getReservationNumber() {
-        return reservationNumber;
+    public int getRestaurantNumber() {
+        return restaurantNumber;
     }
 
-    public void setReservationNumber(String reservationNumber) {
-        this.reservationNumber = reservationNumber;
+    public void setRestaurantNumber(int restaurantNumber) {
+        this.restaurantNumber = restaurantNumber;
+    }
+
+    public int getTableNumber() {
+        return tableNumber;
+    }
+
+    public void setTableNumber(int tableNumber) {
+        this.tableNumber = tableNumber;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getChairs() {
+        return chairs;
+    }
+
+    public void setChairs(int chairs) {
+        this.chairs = chairs;
     }
 
     public LocalDateTime getReservationStart() {
@@ -70,7 +103,10 @@ public class Reservation implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(reservationNumber);
+        dest.writeInt(restaurantNumber);
+        dest.writeInt(tableNumber);
+        dest.writeString(id);
+        dest.writeInt(chairs);
         dest.writeSerializable(reservationStart);
         dest.writeSerializable(reservationEnd);
     }
