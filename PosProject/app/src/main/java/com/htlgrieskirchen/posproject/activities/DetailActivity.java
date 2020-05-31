@@ -1,11 +1,12 @@
 package com.htlgrieskirchen.posproject.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.htlgrieskirchen.posproject.R;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
@@ -19,23 +20,23 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         int orientation = getResources().getConfiguration().orientation;
-        if(orientation != Configuration.ORIENTATION_PORTRAIT){
+        if (orientation != Configuration.ORIENTATION_PORTRAIT) {
             finish();
             return;
         }
-
+        handleIntent();
     }
 
-    private void handleIntent(){
+    private void handleIntent() {
         Intent intent = getIntent();
-        if(intent == null){
-            try{
-                DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.detailFrag);
-                Restaurant restaurant =  intent.getParcelableExtra("restaurant");
-                detailFragment.showInformation(restaurant);
-            }catch (Exception e){
-                Toast.makeText(DetailActivity.this, "An unexpected error occurred", Toast.LENGTH_LONG).show();
-            }
+        if (intent == null) return;
+
+
+        DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.detailFrag);
+        Restaurant restaurant = intent.getParcelableExtra("restaurant");
+
+        if (detailFragment != null && restaurant != null) {
+            detailFragment.showInformation(restaurant);
         }
     }
 }

@@ -93,5 +93,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     private void callActivity(Restaurant restaurant){
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra("restaurant", restaurant);
+        startActivity(intent);
     }
 }

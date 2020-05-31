@@ -31,4 +31,9 @@ public class DetailFragment extends Fragment {
     public void showInformation(Restaurant restaurant){
         tvName.setText(restaurant.getName());
     }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+    }
 }

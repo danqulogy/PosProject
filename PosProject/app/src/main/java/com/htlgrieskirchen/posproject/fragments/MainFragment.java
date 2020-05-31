@@ -23,6 +23,7 @@ import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainFragment extends Fragment implements CallbackRestaurant {
 
@@ -42,6 +43,10 @@ public class MainFragment extends Fragment implements CallbackRestaurant {
 
     private void initializeView(View givenView){
         listView = givenView.findViewById(R.id.main_fragment_listview);
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Restaurant restaurant = restaurants.get(position);
+            listener.onSelectionChanged(restaurant);
+        });
         RestaurantTask restaurantTask = new RestaurantTask(callback);
         restaurantTask.execute("NEAREST", "13.9", "48.0000", "10000");
     }
@@ -59,9 +64,9 @@ public class MainFragment extends Fragment implements CallbackRestaurant {
     @Override
     public void onSuccess(List<Restaurant> restaurants) {
         this.restaurants = restaurants;
-        adapter = new MainLVAdapter(getActivity(), R.layout.main_fragment_lv_item, restaurants);
+        adapter = new MainLVAdapter(requireActivity(), R.layout.main_fragment_lv_item, restaurants);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener((parent, view, position, id) -> listener.onSelectionChanged(restaurants.get(position)));
+
     }
 
     @Override
