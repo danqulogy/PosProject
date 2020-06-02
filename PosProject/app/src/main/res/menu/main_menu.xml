@@ -2,6 +2,11 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/main_menu_search"
+        android:icon="@drawable/ic_search_icon_light"
+        android:title="@string/search"
+        app:showAsAction="ifRoom" />
+    <item
         android:icon="@drawable/ic_menu_icon"
         android:menuCategory="container"
         android:title="@string/placeholder"
@@ -14,6 +19,10 @@
             <item
                 android:id="@+id/main_menu_favPlac"
                 android:title="@string/favouritePlaces" />
+            <item
+                android:id="@+id/main_menu_nearest"
+                android:icon="@drawable/ic_current_location_icon_dark"
+                android:title="@string/findNearestRestaurants" />
             <item
                 android:id="@+id/main_menu_settings"
                 android:icon="@drawable/ic_settings_icon_dark"

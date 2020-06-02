@@ -38,7 +38,10 @@ public class Config {
     public static String RESTAURANT_NEAREST_URL2 = "&lat=";
     public static String RESTAURANT_URL_DISTANCE = "&distance"; //distance in metres
 
-    //URL for put dbid
+    //URL for updating restaurant
+    public static String RESTAURANT_UPDATE_URL = "updateRestaurant";
+
+    //URL for put databaseId
     public static String RESTAURANT_PUT_URL = "restaurants/"; //objectId from database
 
 

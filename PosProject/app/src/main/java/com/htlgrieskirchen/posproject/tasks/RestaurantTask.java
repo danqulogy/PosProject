@@ -28,6 +28,7 @@ import java.util.List;
 public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> {
 
     private CallbackRestaurant callback;
+    private String method;
 
     public RestaurantTask(CallbackRestaurant callback) {
         this.callback = callback;
@@ -35,16 +36,41 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
 
     @Override
     protected List<Restaurant> doInBackground(String... strings) {
-        String method = strings[0];
+         method = strings[0];
 
         if(method.equals("NEAREST")){
             String distance = "";
-            if(strings[3] != null && !strings[3].isEmpty()){
+            if(strings.length > 3){
                 distance = Config.RESTAURANT_URL_DISTANCE+strings[3];
             }
             try{
                 Log.d("doInBackground", "Opening connection");
                 URL url = new URL(Config.SERVER_URL+Config.RESTAURANT_NEAREST_URL1+strings[1]+Config.RESTAURANT_NEAREST_URL2+strings[2]+distance);
+                Log.d("doInBackground", "URL: "+url.toString());
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("GET");
+                Log.d("doInBackground", "finished Opening connection");
+
+                int x;
+                InputStream is = con.getInputStream();
+                StringBuilder sb = new StringBuilder();
+                while ((x = is.read()) != -1){
+                    sb.append((char) x);
+                }
+
+                Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(),DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
+                TypeToken<List<Restaurant>> typeToken = new TypeToken<List<Restaurant>>(){};
+
+                return gson.fromJson(sb.toString(), typeToken.getType());
+            }catch (Exception e){
+                Log.e("doInBackground-nearestRestaurant", "GETTING failed with connection; Error-Massage: "+e.getMessage());
+                e.printStackTrace();
+            }
+        }else if(method.equals("SEARCH")){
+            String name = strings[1];
+            try{
+                Log.d("doInBackground", "Opening connection");
+                URL url = new URL(Config.SERVER_URL+Config.RESTAURANT_FINDBYNAME_URL+name);
                 Log.d("doInBackground", "URL: "+url.toString());
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("GET");
@@ -77,7 +103,8 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
         if(restaurants != null){
             this.callback.onSuccess(restaurants);
         }else{
-            this.callback.onFailure();
+            if(method.equals("NEAREST")) this.callback.onFailure("An error occurred while downloading");
+            else if(method.equals("SEARCH")) this.callback.onFailure("No restaurant with this name registered");
         }
     }
 }

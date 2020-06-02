@@ -6,5 +6,8 @@
     <string name="placeholder">Not specified</string>
     <string name="myReservations">My Reservations</string>
     <string name="favouritePlaces">My locations</string>
-
+    <string name="search">Search</string>
+    <string name="searchDialogText">Enter the name of the Restaurant below</string>
+    <string name="searchDialogHint">Name of Restaurant</string>
+    <string name="findNearestRestaurants">Find nearest Restaurants</string>
 </resources>

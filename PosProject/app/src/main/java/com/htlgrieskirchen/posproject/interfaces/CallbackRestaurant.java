@@ -7,6 +7,6 @@ import java.util.List;
 public interface CallbackRestaurant {
 
     void onSuccess(List<Restaurant> restaurants);
-    void onFailure();
+    void onFailure(String errorMassage);
 
 }

@@ -3,10 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.MainFragment" >
+    android:orientation="horizontal"
+    android:outlineSpotShadowColor="#000000"
+    android:visibility="visible"
+    tools:context=".fragments.MainFragment">
 
     <ListView
         android:id="@+id/main_fragment_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:visibility="visible" />
+
 </LinearLayout>

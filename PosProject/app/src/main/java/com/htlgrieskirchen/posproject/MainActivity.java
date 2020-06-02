@@ -4,28 +4,44 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.htlgrieskirchen.posproject.activities.DetailActivity;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
 import com.htlgrieskirchen.posproject.fragments.DetailFragment;
+import com.htlgrieskirchen.posproject.fragments.MainFragment;
+import com.htlgrieskirchen.posproject.interfaces.CallbackRestaurant;
 import com.htlgrieskirchen.posproject.interfaces.OnSelectionChangedListener;
 import com.htlgrieskirchen.posproject.settings.SettingsActivity;
+import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
-public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener {
+import java.util.List;
 
+public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener, CallbackRestaurant {
+
+    private CallbackRestaurant callback = this;
     private SharedPreferences prefs;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+    private LocationManager locationManager;
     private DetailFragment detailFragment;
+    private MainFragment mainFragment;
     private boolean showDetail = false;
+    private boolean locationPerm = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +52,13 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         preferenceChangeListener = this::setPreferenceChangeListener;
         prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
-        if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Config.RQ_FINE_LOCATION);
-        }
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
 
         detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.detailFrag);
         showDetail = detailFragment != null && detailFragment.isInLayout();
+
+        mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.mainFrag);
     }
 
     @Override
@@ -51,12 +68,13 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             if (grantResult.length > 0 && grantResult[0] != PackageManager.PERMISSION_GRANTED) {
                 Log.d("Permissions", "Location Permission denied");
                 Toast.makeText(this, "Location Permission got denied", Toast.LENGTH_LONG).show();
+                locationPerm = false;
             }
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
         return super.onCreateOptionsMenu(menu);
@@ -69,13 +87,53 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         if(itemId == R.id.main_menu_settings){
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivityForResult(intent, Config.RC_SETTINGS);
+        }else if(itemId == R.id.main_menu_search){
+            RestaurantTask restaurantTask = new RestaurantTask(callback);
+            final View view = getLayoutInflater().inflate(R.layout.dialog_search, null);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setView(view);
+
+            alert.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    EditText name  = view.findViewById(R.id.dialog_search_et);
+                    if(name.getText() != null){
+                        String restaurantName = name.getText().toString();
+                        if(!restaurantName.isEmpty()){
+                            restaurantTask.execute("SEARCH", restaurantName);
+                        }else{
+                            Toast.makeText(MainActivity.this, "Please enter a name", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alert.show();
+        }else if(itemId == R.id.main_menu_nearest){
+            if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Config.RQ_FINE_LOCATION);
+            }
+
+            if(locationPerm){
+                RestaurantTask task = new RestaurantTask(callback);
+                Criteria criteria = new Criteria();
+                criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                String provider = locationManager.getBestProvider(criteria, false);
+                Location location = locationManager.getLastKnownLocation(provider);
+                if(location != null){
+                    String lon = String.valueOf(location.getLongitude());
+                    String lat = String.valueOf(location.getLatitude());
+                    task.execute("NEAREST", lon, lat);
+                }
+            }
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-
-
 
 
     private void setPreferenceChangeListener(SharedPreferences sharedPreferences, String key){
@@ -94,5 +152,16 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra("restaurant", restaurant);
         startActivity(intent);
+    }
+
+    @Override
+    public void onSuccess(List<Restaurant> restaurants) {
+        if(restaurants == null) Toast.makeText(this, "There is no Restaurant with this name registered in our system", Toast.LENGTH_LONG).show();
+        mainFragment.updateLV(restaurants);
+    }
+
+    @Override
+    public void onFailure(String massage) {
+        Toast.makeText(this, massage, Toast.LENGTH_LONG).show();
     }
 }
