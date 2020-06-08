@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -129,6 +130,61 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                     String lat = String.valueOf(location.getLatitude());
                     task.execute("NEAREST", lon, lat);
                 }
+            }else{
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                final View view = getLayoutInflater().inflate(R.layout.dialog_address, null);
+                alert.setView(view);
+
+                Button b1 = view.findViewById(R.id.dialog_address_btn_switch_lon_lat);
+                b1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        view.findViewById(R.id.dialog_address_address).setVisibility(View.GONE);
+                        view.findViewById(R.id.dialog_address_lon_lat).setVisibility(View.VISIBLE);
+                    }
+                });
+
+                Button b2 = view.findViewById(R.id.dialog_address_btn_switch_address);
+                b2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        view.findViewById(R.id.dialog_address_address).setVisibility(View.VISIBLE);
+                        view.findViewById(R.id.dialog_address_lon_lat).setVisibility(View.GONE);
+                    }
+                });
+
+                alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText et_street = view.findViewById(R.id.dialog_address_et_street);
+                        EditText et_town = view.findViewById(R.id.dialog_address_et_town);
+                        EditText et_lon = view.findViewById(R.id.dialog_address_et_lon);
+                        EditText et_lat = view.findViewById(R.id.dialog_address_et_lat);
+
+                        if(view.findViewById(R.id.dialog_address_address).getVisibility() == View.VISIBLE){
+                            String street = et_street.getText().toString();
+                            String town = et_town.getText().toString();
+                            if(street.isEmpty()||town.isEmpty()){
+                                Toast.makeText(MainActivity.this, "Please enter name of street and town", Toast.LENGTH_LONG).show();
+                            }else{
+                                //LocationIQ on server or client
+                            }
+                        }else{
+                            String lon = et_lon.getText().toString();
+                            String lat = et_lat.getText().toString();
+                            if(lon.isEmpty() || lat.isEmpty()){
+                                Toast.makeText(MainActivity.this, "Please enter longitude and latitude", Toast.LENGTH_LONG).show();
+                            }else{
+                                //RestaurantTask for lon and lat nearest
+                            }
+                        }
+                    }
+                }).setNegativeButton("Cancer", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).show();
             }
         }
 

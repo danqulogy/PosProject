@@ -10,4 +10,12 @@
     <string name="searchDialogText">Enter the name of the Restaurant below</string>
     <string name="searchDialogHint">Name of Restaurant</string>
     <string name="findNearestRestaurants">Find nearest Restaurants</string>
+    <string name="addressStreet">Street-Name</string>
+    <string name="addressTown">Town</string>
+    <string name="addressPostal">Postal Code</string>
+    <string name="addressLonLat">Instead enter longitude and latitude</string>
+    <string name="lon">Longitude</string>
+    <string name="lat">Latitude</string>
+    <string name="addressAddress">Switch back to address input</string>
+    <string name="doublePlaceHolder">0.000</string>
 </resources>
