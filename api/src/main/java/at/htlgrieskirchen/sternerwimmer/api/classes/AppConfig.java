@@ -12,7 +12,7 @@ public class AppConfig {
     public static final String DATE_PATTERN = "dd.MM.yyyy hh:mm";
 
     public @Bean MongoClient mongoClient(){
-        return MongoClients.create("mongodb://admin:WsNWPbvt9QW363ak@188.68.56.42:27017/restaurantdb");
+        return MongoClients.create("mongodb://admin:WsNWPbvt9QW363ak@188.68.56.42:27017/");
     }
 
 }
