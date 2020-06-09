@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.htlgrieskirchen.posproject.activities.DetailActivity;
+import com.htlgrieskirchen.posproject.activities.FavPlacesActivity;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
 import com.htlgrieskirchen.posproject.fragments.DetailFragment;
 import com.htlgrieskirchen.posproject.fragments.MainFragment;
@@ -60,6 +61,10 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         showDetail = detailFragment != null && detailFragment.isInLayout();
 
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.mainFrag);
+
+        if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Config.RQ_FINE_LOCATION);
+        }
     }
 
     @Override
@@ -175,7 +180,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             if(lon.isEmpty() || lat.isEmpty()){
                                 Toast.makeText(MainActivity.this, "Please enter longitude and latitude", Toast.LENGTH_LONG).show();
                             }else{
-                                //RestaurantTask for lon and lat nearest
+                                RestaurantTask task = new RestaurantTask(callback);
+                                task.execute("NEAREST", lon, lat);
                             }
                         }
                     }
@@ -186,6 +192,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                     }
                 }).show();
             }
+        }else if(itemId == R.id.main_menu_favPlac){
+            Intent intent = new Intent(MainActivity.this, FavPlacesActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -211,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     }
 
     @Override
-    public void onSuccess(List<Restaurant> restaurants) {
+    public void onSuccess(String method, List<Restaurant> restaurants) {
         if(restaurants == null) Toast.makeText(this, "There is no Restaurant with this name registered in our system", Toast.LENGTH_LONG).show();
         mainFragment.updateLV(restaurants);
     }

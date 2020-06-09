@@ -5,20 +5,21 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="35sp"
-        android:layout_height="35sp"
+        android:id="@+id/imageView"
+        android:layout_width="30sp"
+        android:layout_height="30sp"
         android:layout_marginStart="5sp"
         android:layout_marginTop="5sp"
         android:contentDescription="@string/placeholder"
-        app:srcCompat="@drawable/ic_current_spoon_fork_icon_dark" />
+        app:srcCompat="@drawable/ic_current_star_icon_dark" />
 
     <TextView
-        android:id="@+id/main_fragment_lv_item_name"
-        android:layout_width="match_parent"
+        android:id="@+id/fav_places_item_tv"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5sp"
-        android:layout_marginTop="6sp"
+        android:layout_marginStart="3sp"
+        android:layout_marginTop="3sp"
+        android:layout_weight="1"
         android:text="@string/placeholder"
-        android:textSize="24sp" />
+        android:textSize="25sp" />
 </LinearLayout>

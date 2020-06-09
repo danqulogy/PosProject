@@ -6,13 +6,19 @@ public class Config {
     //ReQuest permissions as Binary (100000, 100001, 100010, ...)
     public static int RQ_FINE_LOCATION = 100000;
 
+    //ReQuest code for intents (100, 101, 102, ...)
+    public static int RQ_RESERVATION_INTENT = 100;
+
     //ResultCode as [Binary] (1000, 1001, 1010, ...)
     public static int RC_SETTINGS = 1000;
+
+    //files
+    public static String FILE_FAV_PLACES = "favPlaces.csv";
 
 
     //  *STANDARD URL*  //
     //server URL
-    public static String SERVER_URL = "http://85.118.186.133:8080/";
+    public static String SERVER_URL = "http://varchar42.me:4242/";
 
 
     //  *RESERVATION URL*   //
@@ -24,7 +30,7 @@ public class Config {
 
 
     //  *RESTAURANT URL*    //
-    //URL for restaurants with the entered name (objectId)
+    //URL for restaurants ; get DBID of restaurant wieth name
     public static String RESTAURANT_GETDBID_URL = "restaurants/getdbid?name=";
 
     //URL for restaurants containing name
