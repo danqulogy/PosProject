@@ -1,10 +1,13 @@
 package at.htlgrieskirchen.sternerwimmer.api;
 
+import at.htlgrieskirchen.sternerwimmer.api.classes.Reservation;
+import at.htlgrieskirchen.sternerwimmer.api.classes.Restaurant;
+import at.htlgrieskirchen.sternerwimmer.api.classes.RestaurantRepository;
+import at.htlgrieskirchen.sternerwimmer.api.classes.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
