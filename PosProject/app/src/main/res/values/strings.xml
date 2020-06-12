@@ -18,4 +18,13 @@
     <string name="lat">Latitude</string>
     <string name="addressAddress">Switch back to address input</string>
     <string name="doublePlaceHolder">0.000</string>
+    <string name="titleActivityFavPlaces">FavPlacesActivity</string>
+    <string name="reservationButton">RESERVE</string>
+    <string name="persons">Persons:</string>
+    <string name="intPlaceHolder">0</string>
+    <string name="start">Start-Time</string>
+    <string name="end">End-Time</string>
+    <string name="date">Date</string>
+    <string name="timePlaceHolder">00:00</string>
+
 </resources>
