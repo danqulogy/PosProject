@@ -1,15 +1,19 @@
 package at.htlgrieskirchen.sternerwimmer.api.classes;
 
 
-import com.google.gson.Gson;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,23 +45,38 @@ public class RestaurantRestController {
                     double d = R * c;
                     System.out.println(d);
                     return d <= Integer.parseInt(distance);
-                })).limit(10).collect(Collectors.toList());
+                })).collect(Collectors.toList());
 
     }
 
-    @GetMapping("findTenNearestRestaurantsByAddress")
+    @GetMapping("getTenNearestRestaurantsByAddress")
     public List<Restaurant> findTenNearestRestaurantsByAddress(@RequestParam(value = "address") String address, @RequestParam(value = "distance", defaultValue = "25000") String distance) {
         try {
-            HttpURLConnection httpURLConnection = (HttpURLConnection) new URL("https://eu1.locationiq.com/v1/search.php?key=897f819f68407b&q=" + address + "&format=json").openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) new URL("https://eu1.locationiq.com/v1/search.php?key=897f819f68407b&q=" + address + "&format=json&exclude={icon}").openConnection();
             httpURLConnection.setRequestMethod("GET");
             StringBuilder stringBuilder = new StringBuilder();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+
             while (bufferedReader.ready()) {
-                stringBuilder.append(bufferedReader.read());
+                stringBuilder.append((char) bufferedReader.read());
             }
-            Gson gson = new Gson();
-            Location location = gson.fromJson(stringBuilder.toString(), Location.class);
-            System.out.println("debug for location object returned by LocationIQ: " + location.getLon() + " " + location.getLat());
+            bufferedReader.close();
+            JsonDeserializer<Location> deserializer = new JsonDeserializer<Location>() {
+                @Override
+                public Location deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+                    return new Location(jsonElement.getAsJsonObject().get("lon").getAsString(), jsonElement.getAsJsonObject().get("lat").getAsString());
+                }
+            };
+            System.out.println("String debug:" + stringBuilder.toString());
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.registerTypeAdapter(new TypeToken<List<Location>>() {
+            }.getType(), deserializer);
+            Gson gson = gsonBuilder.create();
+            List<Location> locations = gson.fromJson(stringBuilder.toString(), new TypeToken<List<Location>>() {
+            }.getType());
+            for (Location location : locations) {
+                System.out.println("debug for location object returned by LocationIQ: " + location.getLon() + " " + location.getLat());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

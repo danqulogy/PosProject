@@ -3,7 +3,9 @@ package at.htlgrieskirchen.sternerwimmer.api.classes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -17,14 +19,13 @@ public class ReservationRestController {
         return restaurantRepository.findByRestaurantNumber(restaurantNumber).getTables().stream().filter(table -> table.getId().equals(tableNumber)).findFirst().get().getReservations();
     }
 
-    @PatchMapping("/addReservation")
-    //@RequestParam(value = "restaurantNumber")String restaurantNumber, @RequestParam(value = "tableNumber") String tableNumber,
-    public void addReservation(@RequestBody Reservation reservation){
-        List<Reservation> reservations = restaurantRepository.findByRestaurantNumber(reservation.getRestaurantNumber()).getTables().stream()
-                .filter(table -> table.getId().equals(reservation.getTableNumber()))
-                .findFirst().get().getReservations();
-       reservations.add(reservation);
+    @GetMapping("/getReservationById")
+    public Reservation getReservationById(@RequestParam(value = "id") String id) {
+        List<Reservation> reservations = new ArrayList<>();
+        restaurantRepository.findAll().stream().forEach(r -> r.getTables().forEach(t -> reservations.addAll(t.getReservations())));
+        return reservations.stream().filter(r -> r.getId().equals(id)).findFirst().get();
     }
+
 
 }
 
