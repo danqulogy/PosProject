@@ -1,5 +1,7 @@
 package at.htlgrieskirchen.sternerwimmer.api.classes;
 
+import java.util.Objects;
+
 public class Reservation {
 
     public String restaurantNumber;
@@ -67,5 +69,35 @@ public class Reservation {
 
     public void setReservationEnd(String reservationEnd) {
         this.reservationEnd = reservationEnd;
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "restaurantNumber='" + restaurantNumber + '\'' +
+                ", tableNumber='" + tableNumber + '\'' +
+                ", id='" + id + '\'' +
+                ", chairs='" + chairs + '\'' +
+                ", reservationStart='" + reservationStart + '\'' +
+                ", reservationEnd='" + reservationEnd + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reservation that = (Reservation) o;
+        return Objects.equals(restaurantNumber, that.restaurantNumber) &&
+                Objects.equals(tableNumber, that.tableNumber) &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(chairs, that.chairs) &&
+                Objects.equals(reservationStart, that.reservationStart) &&
+                Objects.equals(reservationEnd, that.reservationEnd);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(restaurantNumber, tableNumber, id, chairs, reservationStart, reservationEnd);
     }
 }

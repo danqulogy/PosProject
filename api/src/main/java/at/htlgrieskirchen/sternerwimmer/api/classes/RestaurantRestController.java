@@ -1,6 +1,7 @@
 package at.htlgrieskirchen.sternerwimmer.api.classes;
 
 
+import at.htlgrieskirchen.sternerwimmer.api.ReservationRestController;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import net.minidev.json.JSONArray;
@@ -97,13 +98,23 @@ public class RestaurantRestController {
     }
 
     @GetMapping("/findByName")
-    public List<Restaurant> findByname(@RequestParam(value = "name") String name) {
+    public List<Restaurant> findByName(@RequestParam(value = "name") String name) {
         return restaurantRepository.findAll()
                 .stream()
                 .filter(r -> r.name.contains(name))
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/getRestaurantByReservationId")
+    public Restaurant getRestaurantByReservationId(@RequestParam(value = "reservationId") String reservationId) {
+        return restaurantRepository.findByRestaurantNumber(getReservationById(reservationId).getRestaurantNumber());
+    }
+
+    public Reservation getReservationById(String id) {
+        List<Reservation> reservations = new ArrayList<>();
+        restaurantRepository.findAll().stream().forEach(r -> r.getTables().forEach(t -> reservations.addAll(t.getReservations())));
+        return reservations.stream().filter(r -> r.getId().equals(id)).findFirst().get();
+    }
 
     @GetMapping("/getAllRestaurants")
     public List<Restaurant> getAllRestaurants() {
