@@ -24,14 +24,17 @@ import android.widget.Toast;
 
 import com.htlgrieskirchen.posproject.activities.DetailActivity;
 import com.htlgrieskirchen.posproject.activities.FavPlacesActivity;
+import com.htlgrieskirchen.posproject.activities.ReservationsActivity;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
 import com.htlgrieskirchen.posproject.fragments.DetailFragment;
 import com.htlgrieskirchen.posproject.fragments.MainFragment;
+import com.htlgrieskirchen.posproject.handlers.ReservationHandler;
 import com.htlgrieskirchen.posproject.interfaces.CallbackRestaurant;
 import com.htlgrieskirchen.posproject.interfaces.OnSelectionChangedListener;
 import com.htlgrieskirchen.posproject.settings.SettingsActivity;
 import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener, CallbackRestaurant {
@@ -61,6 +64,12 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         showDetail = detailFragment != null && detailFragment.isInLayout();
 
         mainFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.mainFrag);
+
+        try {
+            ReservationHandler.readReservations(openFileInput(Config.FILE_RESERVATIONS));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Config.RQ_FINE_LOCATION);
@@ -99,25 +108,17 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setView(view);
 
-            alert.setPositiveButton("Search", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    EditText name  = view.findViewById(R.id.dialog_search_et);
-                    if(name.getText() != null){
-                        String restaurantName = name.getText().toString();
-                        if(!restaurantName.isEmpty()){
-                            restaurantTask.execute("SEARCH", restaurantName);
-                        }else{
-                            Toast.makeText(MainActivity.this, "Please enter a name", Toast.LENGTH_LONG).show();
-                        }
+            alert.setPositiveButton("Search", (dialog, which) -> {
+                EditText name  = view.findViewById(R.id.dialog_search_et);
+                if(name.getText() != null){
+                    String restaurantName = name.getText().toString();
+                    if(!restaurantName.isEmpty()){
+                        restaurantTask.execute("SEARCH", restaurantName);
+                    }else{
+                        Toast.makeText(MainActivity.this, "Please enter a name", Toast.LENGTH_LONG).show();
                     }
                 }
-            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
+            }).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
             alert.show();
         }else if(itemId == R.id.main_menu_nearest){
             if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
@@ -129,11 +130,13 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 Criteria criteria = new Criteria();
                 criteria.setAccuracy(Criteria.ACCURACY_FINE);
                 String provider = locationManager.getBestProvider(criteria, false);
+                assert provider != null;
                 Location location = locationManager.getLastKnownLocation(provider);
                 if(location != null){
                     String lon = String.valueOf(location.getLongitude());
                     String lat = String.valueOf(location.getLatitude());
-                    task.execute("NEAREST", lon, lat);
+                    String radius = prefs.getString("preferences_search_radius", "25");
+                    task.execute("NEAREST", lon, lat, radius);
                 }
             }else{
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -141,59 +144,48 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 alert.setView(view);
 
                 Button b1 = view.findViewById(R.id.dialog_address_btn_switch_lon_lat);
-                b1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        view.findViewById(R.id.dialog_address_address).setVisibility(View.GONE);
-                        view.findViewById(R.id.dialog_address_lon_lat).setVisibility(View.VISIBLE);
-                    }
+                b1.setOnClickListener(v -> {
+                    view.findViewById(R.id.dialog_address_address).setVisibility(View.GONE);
+                    view.findViewById(R.id.dialog_address_lon_lat).setVisibility(View.VISIBLE);
                 });
 
                 Button b2 = view.findViewById(R.id.dialog_address_btn_switch_address);
-                b2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        view.findViewById(R.id.dialog_address_address).setVisibility(View.VISIBLE);
-                        view.findViewById(R.id.dialog_address_lon_lat).setVisibility(View.GONE);
-                    }
+                b2.setOnClickListener(v -> {
+                    view.findViewById(R.id.dialog_address_address).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.dialog_address_lon_lat).setVisibility(View.GONE);
                 });
 
-                alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText et_street = view.findViewById(R.id.dialog_address_et_street);
-                        EditText et_town = view.findViewById(R.id.dialog_address_et_town);
-                        EditText et_lon = view.findViewById(R.id.dialog_address_et_lon);
-                        EditText et_lat = view.findViewById(R.id.dialog_address_et_lat);
+                alert.setPositiveButton("Submit", (dialog, which) -> {
+                    EditText et_street = view.findViewById(R.id.dialog_address_et_street);
+                    EditText et_town = view.findViewById(R.id.dialog_address_et_town);
+                    EditText et_lon = view.findViewById(R.id.dialog_address_et_lon);
+                    EditText et_lat = view.findViewById(R.id.dialog_address_et_lat);
 
-                        if(view.findViewById(R.id.dialog_address_address).getVisibility() == View.VISIBLE){
-                            String street = et_street.getText().toString();
-                            String town = et_town.getText().toString();
-                            if(street.isEmpty()||town.isEmpty()){
-                                Toast.makeText(MainActivity.this, "Please enter name of street and town", Toast.LENGTH_LONG).show();
-                            }else{
-                                //LocationIQ on server or client
-                            }
+                    if(view.findViewById(R.id.dialog_address_address).getVisibility() == View.VISIBLE){
+                        String street = et_street.getText().toString();
+                        String town = et_town.getText().toString();
+                        if(street.isEmpty()||town.isEmpty()){
+                            Toast.makeText(MainActivity.this, "Please enter name of street and town", Toast.LENGTH_LONG).show();
                         }else{
-                            String lon = et_lon.getText().toString();
-                            String lat = et_lat.getText().toString();
-                            if(lon.isEmpty() || lat.isEmpty()){
-                                Toast.makeText(MainActivity.this, "Please enter longitude and latitude", Toast.LENGTH_LONG).show();
-                            }else{
-                                RestaurantTask task = new RestaurantTask(callback);
-                                task.execute("NEAREST", lon, lat);
-                            }
+                            //LocationIQ on server or client
+                        }
+                    }else{
+                        String lon = et_lon.getText().toString();
+                        String lat = et_lat.getText().toString();
+                        if(lon.isEmpty() || lat.isEmpty()){
+                            Toast.makeText(MainActivity.this, "Please enter longitude and latitude", Toast.LENGTH_LONG).show();
+                        }else{
+                            RestaurantTask task = new RestaurantTask(callback);
+                            task.execute("NEAREST", lon, lat);
                         }
                     }
-                }).setNegativeButton("Cancer", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }).show();
+                }).setNegativeButton("Cancer", (dialog, which) -> dialog.cancel()).show();
             }
         }else if(itemId == R.id.main_menu_favPlac){
             Intent intent = new Intent(MainActivity.this, FavPlacesActivity.class);
+            startActivity(intent);
+        }else if(itemId == R.id.main_menu_reservations){
+            Intent intent = new Intent(this, ReservationsActivity.class);
             startActivity(intent);
         }
 
@@ -222,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     @Override
     public void onSuccess(String method, List<Restaurant> restaurants) {
         if(restaurants == null) Toast.makeText(this, "There is no Restaurant with this name registered in our system", Toast.LENGTH_LONG).show();
-        mainFragment.updateLV(restaurants);
+        else mainFragment.updateLV(restaurants);
     }
 
     @Override

@@ -67,12 +67,10 @@ public class MainFragment extends Fragment {
     }
 
     public void updateLV(List<Restaurant> restaurants){
-        if(restaurants == null || restaurants.size() == 0){
-            this.restaurants = new ArrayList<>();
-        }else this.restaurants = restaurants;
+        this.restaurants = restaurants;
 
         if(adapter == null){
-            adapter = new MainLVAdapter(requireActivity(), R.layout.main_fragment_lv_item, restaurants);
+            adapter = new MainLVAdapter(requireActivity(), R.layout.main_fragment_lv_item, this.restaurants);
             listView.setAdapter(adapter);
         }else{
             adapter.notifyDataSetChanged();

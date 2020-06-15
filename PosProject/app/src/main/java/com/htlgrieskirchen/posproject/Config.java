@@ -14,6 +14,7 @@ public class Config {
 
     //files
     public static String FILE_FAV_PLACES = "favPlaces.csv";
+    public static String FILE_RESERVATIONS = "reservations.csv";
 
 
     //  *STANDARD URL*  //
@@ -30,7 +31,7 @@ public class Config {
 
 
     //  *RESTAURANT URL*    //
-    //URL for restaurants ; get DBID of restaurant wieth name
+    //URL for restaurants ; get DBID of restaurant with name
     public static String RESTAURANT_GETDBID_URL = "restaurants/getdbid?name=";
 
     //URL for restaurants containing name
@@ -42,13 +43,12 @@ public class Config {
     //URL for nearest restaurants
     public static String RESTAURANT_NEAREST_URL1 = "restaurants/getTenNearestRestaurants?lon=";
     public static String RESTAURANT_NEAREST_URL2 = "&lat=";
-    public static String RESTAURANT_URL_DISTANCE = "&distance"; //distance in metres
+    public static String RESTAURANT_URL_DISTANCE = "&distance="; //distance in metres
 
     //URL for updating restaurant
     public static String RESTAURANT_UPDATE_URL = "updateRestaurant";
 
     //URL for put databaseId
     public static String RESTAURANT_PUT_URL = "restaurants/"; //objectId from database
-
 
 }

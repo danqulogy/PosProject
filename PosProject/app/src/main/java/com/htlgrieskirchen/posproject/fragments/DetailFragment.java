@@ -1,5 +1,6 @@
 package com.htlgrieskirchen.posproject.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,10 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.htlgrieskirchen.posproject.Config;
 import com.htlgrieskirchen.posproject.R;
 import com.htlgrieskirchen.posproject.activities.DetailActivity;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
+import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
 public class DetailFragment extends Fragment {
 
@@ -41,6 +44,19 @@ public class DetailFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode == Config.RQ_RESERVATION_INTENT && resultCode == Activity.RESULT_OK){
+            Restaurant outputRestaurant = data.getParcelableExtra("restaurant");
+            if(restaurant != outputRestaurant){
+                RestaurantTask restaurantTask = new RestaurantTask();
+                Gson gson = new Gson();
+                String restaurantJson = gson.toJson(outputRestaurant);
+                restaurantTask.execute("PUT", restaurantJson);
+            }
+        }
     }
 
     private void initializeView(View view){

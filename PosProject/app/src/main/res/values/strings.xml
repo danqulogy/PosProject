@@ -26,5 +26,14 @@
     <string name="end">End-Time</string>
     <string name="date">Date</string>
     <string name="timePlaceHolder">00:00</string>
+    <string name="searchRadius">Select search Radius</string>
+    <string name="reservationsInfo">Your Reservations will be saved here. Please be sure you saved them elsewhere, where they can\'t get lost.\n\nIf you uninstall the app, the Reservations will no longer be saved.</string>
+    <string name="reservationDetail">Your Reservation</string>
+    <string name="minus">-</string>
+    <string name="datePlaceHolder">00.00.0000</string>
+    <string name="tableInformation1">A table for </string>
+    <string name="tableInformation2"> Persons</string>
+    <string name="cancelReservationButton">Cancel reservation</string>
+    <string name="reservationID">ReservationID</string>
 
 </resources>

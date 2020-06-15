@@ -1,4 +1,4 @@
-package com.htlgrieskirchen.posproject;
+package com.htlgrieskirchen.posproject.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -14,9 +14,9 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
-public class RestaurantInfoManager {
+public class RestaurantInfoHandler {
 
-    public RestaurantInfoManager(){}
+    public RestaurantInfoHandler(){}
 
     public static void safeCurrentRestaurants(OutputStream outputStream, List<RestaurantInfo> restaurants){
         try(PrintWriter pw = new PrintWriter(outputStream)){

@@ -1,36 +1,26 @@
 package com.htlgrieskirchen.posproject.activities;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.htlgrieskirchen.posproject.Config;
-import com.htlgrieskirchen.posproject.MainActivity;
 import com.htlgrieskirchen.posproject.R;
-import com.htlgrieskirchen.posproject.RestaurantInfoManager;
+import com.htlgrieskirchen.posproject.handlers.RestaurantInfoHandler;
 import com.htlgrieskirchen.posproject.adapters.FavPlacesLVAdapter;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
 import com.htlgrieskirchen.posproject.beans.RestaurantInfo;
-import com.htlgrieskirchen.posproject.fragments.DetailFragment;
 import com.htlgrieskirchen.posproject.interfaces.CallbackRestaurant;
-import com.htlgrieskirchen.posproject.settings.SettingsActivity;
 import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
 import java.io.FileNotFoundException;
@@ -52,7 +42,7 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
 
         listView = findViewById(R.id.fav_places_listview);
         try {
-            infoList = RestaurantInfoManager.loadCurrentRestaurants(openFileInput(Config.FILE_FAV_PLACES));
+            infoList = RestaurantInfoHandler.loadCurrentRestaurants(openFileInput(Config.FILE_FAV_PLACES));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -66,13 +56,10 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
         adapter = new FavPlacesLVAdapter(this, R.layout.fav_places_lv_item, infoList);
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(FavPlacesActivity.this, DetailFavPlacesActivity.class);
-                intent.putExtra("restaurant", infoList.get(position).getRestaurant());
-                startActivity(intent);
-            }
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = new Intent(FavPlacesActivity.this, DetailFavPlacesActivity.class);
+            intent.putExtra("restaurant", infoList.get(position).getRestaurant());
+            startActivity(intent);
         });
     }
 
@@ -93,25 +80,17 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setView(view);
 
-            alert.setPositiveButton("Search", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    EditText name  = view.findViewById(R.id.dialog_search_et);
-                    if(name.getText() != null){
-                        String restaurantName = name.getText().toString();
-                        if(!restaurantName.isEmpty()){
-                            restaurantTask.execute("SEARCH", restaurantName);
-                        }else{
-                            Toast.makeText(FavPlacesActivity.this, "Please enter a name", Toast.LENGTH_LONG).show();
-                        }
+            alert.setPositiveButton("Search", (dialog, which) -> {
+                EditText name  = view.findViewById(R.id.dialog_search_et);
+                if(name.getText() != null){
+                    String restaurantName = name.getText().toString();
+                    if(!restaurantName.isEmpty()){
+                        restaurantTask.execute("SEARCH", restaurantName);
+                    }else{
+                        Toast.makeText(FavPlacesActivity.this, "Please enter a name", Toast.LENGTH_LONG).show();
                     }
                 }
-            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
+            }).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
             alert.show();
         }
 
@@ -136,7 +115,7 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
                 }
                 adapter.notifyDataSetChanged();
                 try {
-                    RestaurantInfoManager.safeCurrentRestaurants(openFileOutput(Config.FILE_FAV_PLACES, MODE_PRIVATE), infoList);
+                    RestaurantInfoHandler.safeCurrentRestaurants(openFileOutput(Config.FILE_FAV_PLACES, MODE_PRIVATE), infoList);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
