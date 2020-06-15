@@ -1,6 +1,7 @@
 package at.htlgrieskirchen.sternerwimmer.api.classes;
 
 
+import at.htlgrieskirchen.sternerwimmer.api.ReservationRestController;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import net.minidev.json.JSONArray;
@@ -56,27 +57,35 @@ public class RestaurantRestController {
             httpURLConnection.setRequestMethod("GET");
             StringBuilder stringBuilder = new StringBuilder();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-
-            while (bufferedReader.ready()) {
-                stringBuilder.append((char) bufferedReader.read());
-            }
+            String string = bufferedReader.readLine();
             bufferedReader.close();
-            JsonDeserializer<Location> deserializer = new JsonDeserializer<Location>() {
-                @Override
-                public Location deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-                    return new Location(jsonElement.getAsJsonObject().get("lon").getAsString(), jsonElement.getAsJsonObject().get("lat").getAsString());
-                }
-            };
+
             System.out.println("String debug:" + stringBuilder.toString());
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            gsonBuilder.registerTypeAdapter(new TypeToken<List<Location>>() {
-            }.getType(), deserializer);
-            Gson gson = gsonBuilder.create();
-            List<Location> locations = gson.fromJson(stringBuilder.toString(), new TypeToken<List<Location>>() {
+            Gson gson = new Gson();
+            List<Location> locations = gson.fromJson(string, new TypeToken<List<Location>>() {
             }.getType());
             for (Location location : locations) {
                 System.out.println("debug for location object returned by LocationIQ: " + location.getLon() + " " + location.getLat());
             }
+            return getAllRestaurants().stream().filter((r -> {
+                String lat = locations.get(0).getLat();
+                String lon = locations.get(0).getLon();
+                double R = 6371e3;
+                double lat1 = Double.parseDouble(r.getLat());
+                double lat2 = Double.parseDouble(lat);
+                double lon1 = Double.parseDouble(r.getLon());
+                double lon2 = Double.parseDouble(lon);
+                double phi1 = lat1 * Math.PI / 180;
+                double phi2 = lat2 * Math.PI / 180;
+                double dphi = (lat2 - lat1) * Math.PI / 180;
+                double dlambda = (lon2 - lon1) * Math.PI / 180;
+
+                double a = Math.sin(dphi / 2) * Math.sin(dphi / 2) + Math.cos(phi1) * Math.cos(phi2) * Math.sin(dlambda / 2) * Math.sin(dlambda / 2);
+                double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                double d = R * c;
+                System.out.println(d);
+                return d <= Integer.parseInt(distance);
+            })).collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -89,13 +98,23 @@ public class RestaurantRestController {
     }
 
     @GetMapping("/findByName")
-    public List<Restaurant> findByname(@RequestParam(value = "name") String name) {
+    public List<Restaurant> findByName(@RequestParam(value = "name") String name) {
         return restaurantRepository.findAll()
                 .stream()
                 .filter(r -> r.name.contains(name))
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/getRestaurantByReservationId")
+    public Restaurant getRestaurantByReservationId(@RequestParam(value = "reservationId") String reservationId) {
+        return restaurantRepository.findByRestaurantNumber(getReservationById(reservationId).getRestaurantNumber());
+    }
+
+    public Reservation getReservationById(String id) {
+        List<Reservation> reservations = new ArrayList<>();
+        restaurantRepository.findAll().stream().forEach(r -> r.getTables().forEach(t -> reservations.addAll(t.getReservations())));
+        return reservations.stream().filter(r -> r.getId().equals(id)).findFirst().get();
+    }
 
     @GetMapping("/getAllRestaurants")
     public List<Restaurant> getAllRestaurants() {

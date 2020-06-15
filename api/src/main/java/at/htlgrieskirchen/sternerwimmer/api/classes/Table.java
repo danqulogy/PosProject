@@ -45,4 +45,13 @@ public class Table {
     }
 
 
+    @Override
+    public String toString() {
+        return "Table{" +
+                "restaurantNumber='" + restaurantNumber + '\'' +
+                ", id='" + id + '\'' +
+                ", chairsAvailable='" + chairsAvailable + '\'' +
+                ", reservations=" + reservations +
+                '}';
+    }
 }

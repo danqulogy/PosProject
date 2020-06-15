@@ -27,7 +27,7 @@ public class ApiApplication implements CommandLineRunner {
         restaurantRepository.deleteAll();
         List<Table> oberndorferTables = new ArrayList<>();
         List<Reservation> oberdorferTableReservations = new ArrayList<>();
-        Reservation reservation = new Reservation("1","1","4","sterner","4.4.2020 14:20", "4.4.2020 15:50");
+        Reservation reservation = new Reservation("1","1","sterner","4","4.4.2020 14:20", "4.4.2020 15:50");
         oberdorferTableReservations.add(reservation);
         Table oberndorferTable = new Table("1","1","4", oberdorferTableReservations);
         oberndorferTables.add(oberndorferTable);
