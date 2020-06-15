@@ -11,6 +11,12 @@ public class RestaurantInfo {
         this.name = name;
     }
 
+    public RestaurantInfo(String dbId, String name, Restaurant restaurant) {
+        this.dbId = dbId;
+        this.name = name;
+        this.restaurant = restaurant;
+    }
+
     public String getDbId() {
         return dbId;
     }

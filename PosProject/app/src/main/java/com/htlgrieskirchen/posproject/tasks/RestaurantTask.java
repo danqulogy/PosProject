@@ -34,7 +34,6 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
 
     private CallbackRestaurant callback;
     private String method;
-    private String index = "";
 
     public RestaurantTask(){}
     public RestaurantTask(CallbackRestaurant callback) {
@@ -108,7 +107,6 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
                 break;
             case "DBID":
                 try {
-                    index = strings[2];
                     Log.d("doInBackground", "Opening connection");
                     URL url = new URL(Config.SERVER_URL + Config.RESTAURANT_PUT_URL + strings[1]);
                     Log.d("doInBackground", "URL: " + url.toString());
@@ -124,10 +122,13 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
                     }
 
                     Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
-                    TypeToken<List<Restaurant>> typeToken = new TypeToken<List<Restaurant>>() {
-                    };
+                    TypeToken<Restaurant> typeToken = new TypeToken<Restaurant>() {};
 
-                    return gson.fromJson(sb.toString(), typeToken.getType());
+                    Restaurant restaurant = gson.fromJson(sb.toString(), typeToken.getType());
+                    List<Restaurant> list = new ArrayList<>();
+                    list.add(restaurant);
+
+                    return list;
                 } catch (IOException ex) {
                     Log.d("doInBackground", "DBID went wrong error massage: " + ex.getMessage());
                 }
@@ -170,13 +171,41 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
                     Log.d("doInBackground", "URL: " + url.toString());
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("PUT");
-                    con.getDoOutput();
+                    con.setDoOutput(true);
                     Log.d("doInBackground", "finished Opening connection");
-
 
                     PrintWriter pw = new PrintWriter(con.getOutputStream());
                     pw.write(strings[1]);
                     pw.flush();
+
+                    List<Restaurant> list = new ArrayList<>();
+                    list.add(restaurant);
+
+                    return list;
+                } catch (IOException ex) {
+                    Log.d("doInBackground", "GETALL went wrong error massage: " + ex.getMessage());
+                }
+                break;
+            case "GETBYRESERVATION":
+                try {
+                    Log.d("doInBackground", "Opening connection");
+                    URL url = new URL(Config.SERVER_URL + Config.RESTAURANT_BY_RESERVATION_ID_URL+ strings[1]);
+                    Log.d("doInBackground", "URL: " + url.toString());
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("GET");
+                    Log.d("doInBackground", "finished Opening connection");
+
+                    int x;
+                    InputStream is = con.getInputStream();
+                    StringBuilder sb = new StringBuilder();
+                    while ((x = is.read()) != -1) {
+                        sb.append((char) x);
+                    }
+
+                    Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
+                    TypeToken<Restaurant> typeToken = new TypeToken<Restaurant>() {};
+
+                    Restaurant restaurant = gson.fromJson(sb.toString(), typeToken.getType());
 
                     List<Restaurant> list = new ArrayList<>();
                     list.add(restaurant);
@@ -196,10 +225,19 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
     @Override
     public void onPostExecute(List<Restaurant> restaurants){
         if(restaurants != null){
-            this.callback.onSuccess(method+index, restaurants);
+            this.callback.onSuccess(method, restaurants);
         }else{
-            if(method.equals("NEAREST")) this.callback.onFailure("An error occurred while downloading");
-            else if(method.equals("SEARCH")) this.callback.onFailure("No restaurant with this name registered");
+            switch (method) {
+                case "NEAREST":
+                    this.callback.onFailure("An error occurred while downloading");
+                    break;
+                case "SEARCH":
+                    this.callback.onFailure("No restaurant with this name registered");
+                    break;
+                case "GETBYRESERVATION":
+                    this.callback.onFailure("An error occurred while loading the restaurant name");
+                    break;
+            }
         }
     }
 }

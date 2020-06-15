@@ -12,22 +12,29 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantInfoHandler {
 
-    public RestaurantInfoHandler(){}
+    private static  List<RestaurantInfo> restaurantInfos = new ArrayList<>();
 
-    public static void safeCurrentRestaurants(OutputStream outputStream, List<RestaurantInfo> restaurants){
+    public static void safeCurrentRestaurants(OutputStream outputStream){
         try(PrintWriter pw = new PrintWriter(outputStream)){
             Gson gson = new Gson();
-            String json = gson.toJson(restaurants);
+            List<RestaurantInfo> outputList = new ArrayList<>();
+
+            for(RestaurantInfo r: restaurantInfos){
+                outputList.add(new RestaurantInfo(r.getDbId(), r.getName()));
+            }
+
+            String json = gson.toJson(outputList);
             pw.write(json);
             pw.flush();
         }
     }
 
-    public static List<RestaurantInfo> loadCurrentRestaurants(InputStream is){
+    public static void loadCurrentRestaurants(InputStream is){
         try(BufferedReader br = new BufferedReader(new InputStreamReader(is))){
             StringBuilder input = new StringBuilder();
             while(br.ready()){
@@ -36,11 +43,33 @@ public class RestaurantInfoHandler {
             Gson gson = new Gson();
             TypeToken<List<RestaurantInfo>> typeToken = new TypeToken<List<RestaurantInfo>>(){};
 
-            return gson.fromJson(input.toString(), typeToken.getType());
+            restaurantInfos = gson.fromJson(input.toString(), typeToken.getType());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
     }
 
+    public static void addRestaurantInfo(Restaurant restaurant){
+        restaurantInfos.add(new RestaurantInfo(restaurant.getId(), restaurant.getName(), restaurant));
+    }
+
+    public static void deleteRestaurantInfo(RestaurantInfo info){
+        for(RestaurantInfo r: restaurantInfos){
+            if(r.getDbId().equals(info.getDbId())) restaurantInfos.remove(r);
+        }
+    }
+
+    public static void addRestaurantToInfo(Restaurant restaurant){
+        for(RestaurantInfo r: restaurantInfos){
+            if(r.getDbId().equals(restaurant.getId())) r.setRestaurant(restaurant);
+        }
+    }
+
+    public static List<RestaurantInfo> getRestaurantInfos() {
+        return restaurantInfos;
+    }
+
+    public static void setRestaurantInfos(List<RestaurantInfo> restaurantInfos) {
+        RestaurantInfoHandler.restaurantInfos = restaurantInfos;
+    }
 }

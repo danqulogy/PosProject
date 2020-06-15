@@ -35,5 +35,6 @@
     <string name="tableInformation2"> Persons</string>
     <string name="cancelReservationButton">Cancel reservation</string>
     <string name="reservationID">ReservationID</string>
+    <string name="loading">Loading…</string>
 
 </resources>

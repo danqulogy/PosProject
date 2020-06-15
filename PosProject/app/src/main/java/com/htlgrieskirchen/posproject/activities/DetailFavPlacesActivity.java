@@ -4,11 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.htlgrieskirchen.posproject.R;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
+import com.htlgrieskirchen.posproject.handlers.RestaurantInfoHandler;
+import com.htlgrieskirchen.posproject.interfaces.CallbackRestaurant;
+import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
-public class DetailFavPlacesActivity extends AppCompatActivity {
+import java.util.List;
+
+public class DetailFavPlacesActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,7 +23,9 @@ public class DetailFavPlacesActivity extends AppCompatActivity {
         setContentView(R.layout.fragment_detail);
 
         Intent intent = getIntent();
-        Restaurant restaurant = intent.getParcelableExtra("restaurant");
+        String name = intent.getStringExtra("name");
 
+        TextView tv = findViewById(R.id.detail_fragment_name);
+        tv.setText(name);
     }
 }

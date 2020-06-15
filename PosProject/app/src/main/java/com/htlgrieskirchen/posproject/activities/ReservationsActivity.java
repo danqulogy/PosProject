@@ -13,26 +13,38 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.internal.$Gson$Preconditions;
+import com.htlgrieskirchen.posproject.Config;
 import com.htlgrieskirchen.posproject.R;
 import com.htlgrieskirchen.posproject.adapters.ReservationsLVAdapter;
 import com.htlgrieskirchen.posproject.beans.Reservation;
 import com.htlgrieskirchen.posproject.handlers.ReservationHandler;
+import com.htlgrieskirchen.posproject.interfaces.CallbackReservation;
+import com.htlgrieskirchen.posproject.tasks.ReservationTask;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReservationsActivity extends AppCompatActivity {
+public class ReservationsActivity extends AppCompatActivity implements CallbackReservation {
 
     private List<Reservation> reservations;
     private ListView listView;
     ReservationsLVAdapter adapter;
+    CallbackReservation callback = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservations);
+
+        try {
+            ReservationHandler.readReservations(openFileInput(Config.FILE_RESERVATIONS));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         reservations = ReservationHandler.getReservationList();
         if(reservations == null){
@@ -70,7 +82,10 @@ public class ReservationsActivity extends AppCompatActivity {
             alert.setPositiveButton("Submit", (dialog, which) -> {
                 EditText et = view.findViewById(R.id.dialog_add_reservation_et);
                 String reservationId = et.getText().toString();
-                //Task for Reservation get
+                if(!reservationId.isEmpty() && reservationId.length() > 4){
+                    ReservationTask task = new ReservationTask(callback);
+                    task.execute("GET", reservationId);
+                }
             }).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).show();
 
         }else if(itemId == R.id.reservation_menu_info){
@@ -82,5 +97,37 @@ public class ReservationsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSuccess(String method, Reservation reservation) {
+        if(method.equals("GET")){
+            this.reservations = ReservationHandler.getReservationList();
+            boolean b = true;
+
+            for(Reservation r: reservations){
+                if (r.getId().equals(reservation.getId())) {
+                    b = false;
+                    break;
+                }
+            }
+
+            if(b){
+                ReservationHandler.addReservation(reservation);
+                try {
+                    ReservationHandler.safeReservations(openFileOutput(Config.FILE_RESERVATIONS, MODE_PRIVATE));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }else Toast.makeText(this, "Reservation already exists", Toast.LENGTH_LONG).show();
+
+            this.reservations = ReservationHandler.getReservationList();
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onFailure(String response) {
+        Toast.makeText(this,response, Toast.LENGTH_LONG).show();
     }
 }

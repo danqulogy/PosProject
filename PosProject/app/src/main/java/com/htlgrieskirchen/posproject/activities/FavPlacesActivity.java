@@ -33,32 +33,30 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
     private List<RestaurantInfo> infoList = new ArrayList<>();
     private FavPlacesLVAdapter adapter;
     private CallbackRestaurant callback = this;
-    private List<Restaurant> restaurants = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fav_places);
 
-        listView = findViewById(R.id.fav_places_listview);
         try {
-            infoList = RestaurantInfoHandler.loadCurrentRestaurants(openFileInput(Config.FILE_FAV_PLACES));
+            RestaurantInfoHandler.loadCurrentRestaurants(openFileInput(Config.FILE_FAV_PLACES));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        if(infoList != null && infoList.size() > 0 && restaurants.size() == 0){
-            RestaurantTask task = new RestaurantTask(callback);
-            task.execute("GETALL");
-        }
-
-        if(infoList == null) infoList = new ArrayList<>();
-        adapter = new FavPlacesLVAdapter(this, R.layout.fav_places_lv_item, infoList);
+        listView = findViewById(R.id.fav_places_listview);
+        adapter = new FavPlacesLVAdapter(this, R.layout.fav_places_lv_item, RestaurantInfoHandler.getRestaurantInfos());
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            Intent intent = new Intent(FavPlacesActivity.this, DetailFavPlacesActivity.class);
-            intent.putExtra("restaurant", infoList.get(position).getRestaurant());
+            RestaurantInfo info = RestaurantInfoHandler.getRestaurantInfos().get(position);
+
+            RestaurantTask task = new RestaurantTask(callback);
+            task.execute("DBID", info.getDbId());
+
+            Intent intent = new Intent(this, DetailFavPlacesActivity.class);
+            intent.putExtra("name", info.getName());
             startActivity(intent);
         });
     }
@@ -100,29 +98,31 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
     @Override
     public void onSuccess(String method, List<Restaurant> restaurants) {
         if(method.equals("DBID")){
-            this.restaurants.addAll(restaurants);
-            for (int i = 0; i < infoList.size(); i ++){
-                if(method.contains(i+"")){
-                    infoList.get(i).setRestaurant(restaurants.get(0));
-                }
-            }
-        }else{
+            RestaurantInfoHandler.addRestaurantToInfo(restaurants.get(0));
+        }else if(method.equals("SEARCH")){
             if(restaurants != null && restaurants.size() != 0){
-                for(RestaurantInfo r: infoList){
-                    for(Restaurant rest: restaurants){
-                        if(r.getDbId().equals(rest.getId())) r.setRestaurant(rest);
+                Restaurant restaurant = restaurants.get(0);
+                boolean b = true;
+                //For a non redundant list
+                for(RestaurantInfo r: RestaurantInfoHandler.getRestaurantInfos()){
+                    if (r.getDbId().equals(restaurant.getId())) {
+                        b = false;
+                        break;
                     }
                 }
-                adapter.notifyDataSetChanged();
-                try {
-                    RestaurantInfoHandler.safeCurrentRestaurants(openFileOutput(Config.FILE_FAV_PLACES, MODE_PRIVATE), infoList);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+                if(b){
+                    RestaurantInfoHandler.addRestaurantInfo(restaurant);
+                    try {
+                        RestaurantInfoHandler.safeCurrentRestaurants(openFileOutput(Config.FILE_FAV_PLACES, MODE_PRIVATE));
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }else Toast.makeText(this, "Restaurant already is a favourite", Toast.LENGTH_LONG).show();
             }else{
                 Toast.makeText(FavPlacesActivity.this, "No Restaurant found with this name", Toast.LENGTH_LONG).show();
             }
         }
+        adapter.notifyDataSetChanged();
     }
 
     @Override
