@@ -12,7 +12,7 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(String restaurantNumber, String tableNumber, String chairs, String id, String reservationStart, String reservationEnd) {
+    public Reservation(String restaurantNumber, String tableNumber, String id, String chairs, String reservationStart, String reservationEnd) {
         this.restaurantNumber = restaurantNumber;
         this.tableNumber = tableNumber;
         this.chairs = chairs;
