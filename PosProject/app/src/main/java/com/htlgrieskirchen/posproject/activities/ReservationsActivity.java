@@ -119,10 +119,11 @@ public class ReservationsActivity extends AppCompatActivity implements CallbackR
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-            }else Toast.makeText(this, "Reservation already exists", Toast.LENGTH_LONG).show();
 
-            this.reservations = ReservationHandler.getReservationList();
-            adapter.notifyDataSetChanged();
+                this.reservations = ReservationHandler.getReservationList();
+                adapter.notifyDataSetChanged();
+
+            }else Toast.makeText(this, "Reservation already exists", Toast.LENGTH_LONG).show();
         }
     }
 

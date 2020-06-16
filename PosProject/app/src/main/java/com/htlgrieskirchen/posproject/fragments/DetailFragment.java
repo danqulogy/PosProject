@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.htlgrieskirchen.posproject.Config;
 import com.htlgrieskirchen.posproject.R;
 import com.htlgrieskirchen.posproject.activities.DetailActivity;
+import com.htlgrieskirchen.posproject.activities.ReservationSendActivity;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
 import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
@@ -34,8 +35,7 @@ public class DetailFragment extends Fragment {
 
         reserve = view.findViewById(R.id.fragment_detail_button);
         reserve.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            //Intent with reservation screen ! !   !    !     !
+            Intent intent = new Intent(getActivity(), ReservationSendActivity.class);
             intent.putExtra("restaurant", restaurant);
             startActivityForResult(intent, Config.RQ_RESERVATION_INTENT);
 

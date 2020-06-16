@@ -57,19 +57,17 @@ public class ReservationHandler {
 
     public static void readReservations(InputStream is){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        reservationList.clear();
         try(BufferedReader br = new BufferedReader(new InputStreamReader(is))){
 
-            StringBuilder sb = new StringBuilder();
-            while(br.ready()){
-                sb.append(br.readLine());
-            }
-            String input = sb.toString();
+            String input = br.readLine();
 
             input = input.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\"", "").trim();
 
 
             String[] arr = input.split("\\}");
             for(String s: arr){
+                if(s.equals("") || s.isEmpty()) break;
                 s = s.replaceAll("\\{", "").trim();
                 String[] arr1 = s.split(",");
                 LocalDateTime start = LocalDateTime.parse(arr1[4].split(":")[1] +":"+ arr1[4].split(":")[2], dtf);

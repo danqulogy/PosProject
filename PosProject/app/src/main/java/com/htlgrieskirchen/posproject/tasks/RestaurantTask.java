@@ -43,7 +43,7 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
 
     @Override
     protected List<Restaurant> doInBackground(String... strings) {
-         method = strings[0];
+        method = strings[0];
 
         switch (method) {
             case "NEAREST":
@@ -215,9 +215,36 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
                     Log.d("doInBackground", "GETALL went wrong error massage: " + ex.getMessage());
                 }
                 break;
+            case "GETBYADDRESS":
+                try {
+                    distance = "";
+                    if(strings.length > 3){
+                        int radius = Integer.parseInt(strings[3]);
+                        distance = String.valueOf((radius*1000));
+                    }
+                    Log.d("doInBackground", "Opening connection");
+                    URL url = new URL(Config.SERVER_URL + Config.RESTAURANT_GET_BY_ADDRESS_URL1 + strings[1] +" "+strings[2] + Config.RESTAURANT_GET_BY_ADDRESS_URL2 + distance);
+                    Log.d("doInBackground", "URL: " + url.toString());
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("GET");
+                    Log.d("doInBackground", "finished Opening connection");
+
+                    int x;
+                    InputStream is = con.getInputStream();
+                    StringBuilder sb = new StringBuilder();
+                    while ((x = is.read()) != -1) {
+                        sb.append((char) x);
+                    }
+
+                    Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
+                    TypeToken<List<Restaurant>> typeToken = new TypeToken<List<Restaurant>>() {};
+
+                    return gson.fromJson(sb.toString(), typeToken.getType());
+                } catch (IOException ex) {
+                    Log.d("doInBackground", "GETALL went wrong error massage: " + ex.getMessage());
+                }
+                break;
         }
-
-
 
         return null;
     }
@@ -232,10 +259,13 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
                     this.callback.onFailure("An error occurred while downloading");
                     break;
                 case "SEARCH":
-                    this.callback.onFailure("No restaurant with this name registered");
+                    this.callback.onFailure("An error occurred while searching");
                     break;
                 case "GETBYRESERVATION":
                     this.callback.onFailure("An error occurred while loading the restaurant name");
+                    break;
+                case "GETBYADDRESS":
+                    this.callback.onFailure("An error occurred while searching for this address");
                     break;
             }
         }

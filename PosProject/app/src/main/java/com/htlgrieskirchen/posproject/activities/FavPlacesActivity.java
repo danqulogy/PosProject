@@ -30,7 +30,6 @@ import java.util.List;
 public class FavPlacesActivity extends AppCompatActivity implements CallbackRestaurant {
 
     private ListView listView;
-    private List<RestaurantInfo> infoList = new ArrayList<>();
     private FavPlacesLVAdapter adapter;
     private CallbackRestaurant callback = this;
 
@@ -55,9 +54,7 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
             RestaurantTask task = new RestaurantTask(callback);
             task.execute("DBID", info.getDbId());
 
-            Intent intent = new Intent(this, DetailFavPlacesActivity.class);
-            intent.putExtra("name", info.getName());
-            startActivity(intent);
+
         });
     }
 
@@ -99,6 +96,10 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
     public void onSuccess(String method, List<Restaurant> restaurants) {
         if(method.equals("DBID")){
             RestaurantInfoHandler.addRestaurantToInfo(restaurants.get(0));
+
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra("restaurant", restaurants.get(0));
+            startActivity(intent);
         }else if(method.equals("SEARCH")){
             if(restaurants != null && restaurants.size() != 0){
                 Restaurant restaurant = restaurants.get(0);

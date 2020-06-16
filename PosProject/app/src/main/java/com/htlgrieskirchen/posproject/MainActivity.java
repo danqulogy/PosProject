@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 Log.d("Permissions", "Location Permission denied");
                 Toast.makeText(this, "Location Permission got denied", Toast.LENGTH_LONG).show();
                 locationPerm = false;
-            }
+            }else locationPerm = true;
         }
     }
 
@@ -135,7 +135,13 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 if(location != null){
                     String lon = String.valueOf(location.getLongitude());
                     String lat = String.valueOf(location.getLatitude());
-                    String radius = prefs.getString("preferences_search_radius", "25");
+                    String radius;
+                    try{
+                         radius = prefs.getString("preferences_search_radius", "25");
+                    }catch (Exception e){
+                        Toast.makeText(this, "No valid Radius! Please change!",Toast.LENGTH_LONG).show();
+                        radius = "25";
+                    }
                     task.execute("NEAREST", lon, lat, radius);
                 }
             }else{
@@ -167,7 +173,15 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         if(street.isEmpty()||town.isEmpty()){
                             Toast.makeText(MainActivity.this, "Please enter name of street and town", Toast.LENGTH_LONG).show();
                         }else{
-                            //LocationIQ on server or client
+                            RestaurantTask task = new RestaurantTask(callback);
+                            String radius;
+                            try{
+                                radius = prefs.getString("preferences_search_radius", "25");
+                            }catch (Exception e){
+                                Toast.makeText(this, "No valid Radius! Please change!",Toast.LENGTH_LONG).show();
+                                radius = "25";
+                            }
+                            task.execute("GETBYADDRESS", town, street, radius);
                         }
                     }else{
                         String lon = et_lon.getText().toString();
@@ -179,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             task.execute("NEAREST", lon, lat);
                         }
                     }
-                }).setNegativeButton("Cancer", (dialog, which) -> dialog.cancel()).show();
+                }).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).show();
             }
         }else if(itemId == R.id.main_menu_favPlac){
             Intent intent = new Intent(MainActivity.this, FavPlacesActivity.class);
@@ -213,8 +227,20 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     @Override
     public void onSuccess(String method, List<Restaurant> restaurants) {
-        if(restaurants == null) Toast.makeText(this, "There is no Restaurant with this name registered in our system", Toast.LENGTH_LONG).show();
-        else mainFragment.updateLV(restaurants);
+        switch (method){
+            case "SEARCH":
+                    if(restaurants == null) Toast.makeText(this, "There is no Restaurant with this name registered in our system", Toast.LENGTH_LONG).show();
+                    else mainFragment.updateLV(restaurants);
+                break;
+            case "NEAREST":
+                    if(restaurants == null) Toast.makeText(this, "There is no Restaurant around in the selected radius", Toast.LENGTH_LONG).show();
+                    else mainFragment.updateLV(restaurants);
+                break;
+            case "GETBYADDRESS":
+                    if(restaurants == null) Toast.makeText(this, "There is no Restaurant around that address in the selected radius", Toast.LENGTH_LONG).show();
+                    else mainFragment.updateLV(restaurants);
+                break;
+        }
     }
 
     @Override

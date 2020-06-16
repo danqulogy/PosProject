@@ -25,7 +25,7 @@ public class Config {
     //  *RESERVATION URL*   //
     //URL for reservations on a table in a restaurant
     public static String RESERVATION_RESERVATIONSFORTABLE_URL1 = "reservations/getReservationsForTable?restaurantNumber=";
-    public static String RESERVATION_RESERVATIONSFORTABLE_URL2 = "&tableNumber=1";
+    public static String RESERVATION_RESERVATIONSFORTABLE_URL2 = "&tableNumber=";
     //URL for adding reservation on a table
     public static String RESERVATION_ADD_URL = "reservations/addReservation"; //PUT with Reservation as Json
     //URL for deleting reservation
@@ -51,5 +51,8 @@ public class Config {
     public static String RESTAURANT_PUT_URL = "restaurants/"; //objectId from database
     //URL for restaurant by reservationID
     public static String RESTAURANT_BY_RESERVATION_ID_URL = "restaurants/getRestaurantByReservationId?reservationId=";
+    //URL for restaurants by address
+    public static String RESTAURANT_GET_BY_ADDRESS_URL1 = "restaurants/getTenNearestRestaurantsByAddress?address=";
+    public static String RESTAURANT_GET_BY_ADDRESS_URL2 = "&distance=";
 
 }

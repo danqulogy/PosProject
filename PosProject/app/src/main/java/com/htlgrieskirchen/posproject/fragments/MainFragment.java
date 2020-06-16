@@ -1,37 +1,22 @@
 package com.htlgrieskirchen.posproject.fragments;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Toast;
-
-import com.htlgrieskirchen.posproject.Config;
 import com.htlgrieskirchen.posproject.R;
 import com.htlgrieskirchen.posproject.adapters.MainLVAdapter;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
-import com.htlgrieskirchen.posproject.interfaces.CallbackRestaurant;
 import com.htlgrieskirchen.posproject.interfaces.OnSelectionChangedListener;
-import com.htlgrieskirchen.posproject.settings.SettingsActivity;
-import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MainFragment extends Fragment {
 
