@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">RestaurantSide</string>
+    <string name="tableName">Table-Name</string>
+    <string name="placeholder">Not specified</string>
+    <string name="datePlaceholder">01.01.2000</string>
+    <string name="timePlaceHolder">00:00</string>
+    <string name="minus">-</string>
+    <string name="intPlaceholder">0</string>
+    <string name="tableItem">Table %1$x</string>
+    <string name="persons">%1$x persons</string>
+</resources>
