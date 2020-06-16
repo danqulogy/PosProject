@@ -17,13 +17,7 @@
         <activity android:name=".activities.ReservationSendActivity" />
         <activity android:name=".activities.ReservationDetailActivity" />
         <activity android:name=".activities.ReservationsActivity" />
-        <activity android:name=".activities.FavPlacesActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".activities.FavPlacesActivity"/>
         <activity android:name=".activities.DetailActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
