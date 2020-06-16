@@ -11,6 +11,17 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PointOfInterest;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.htlgrieskirchen.posproject.Config;
 import com.htlgrieskirchen.posproject.R;
 import com.htlgrieskirchen.posproject.beans.Reservation;
@@ -28,12 +39,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class ReservationDetailActivity extends AppCompatActivity implements CallbackReservation, CallbackRestaurant {
+public class ReservationDetailActivity extends AppCompatActivity implements CallbackReservation, CallbackRestaurant, OnMapReadyCallback {
 
     Reservation reservation;
     CallbackReservation callback = this;
     CallbackRestaurant callbackRestaurant = this;
-
+    MapView mMapView;
+    Restaurant restaurant;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +56,7 @@ public class ReservationDetailActivity extends AppCompatActivity implements Call
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
 
+    initGoogleMapView(savedInstanceState);
 
         if(reservation == null){
             Toast.makeText(this, "Error showing the chosen Reservation", Toast.LENGTH_LONG).show();
@@ -76,6 +89,16 @@ public class ReservationDetailActivity extends AppCompatActivity implements Call
         }
     }
 
+    private void initGoogleMapView(Bundle savedInstanceState){
+        Bundle mapViewBundle = null;
+        if(savedInstanceState != null){
+            mapViewBundle = savedInstanceState.getBundle(Config.MAPVIEW_BUNDLE_KEY);
+        }
+
+        mMapView = (MapView) findViewById(R.id.reservation_detail_mapView);
+        mMapView.onCreate(mapViewBundle);
+    }
+
     @Override
     public void onSuccess(String method, Reservation reservation) {
         if(method.equals("DELETE")){
@@ -97,11 +120,87 @@ public class ReservationDetailActivity extends AppCompatActivity implements Call
         if(method.equals("GETBYRESERVATION")){
             TextView tv = findViewById(R.id.reservation_detail_restaurant_name);
             tv.setText(restaurants.get(0).getName());
+           restaurant = restaurants.get(0);
+           mMapView.getMapAsync(this);
         }
     }
 
     @Override
     public void onFailure(String response) {
         Toast.makeText(this, response, Toast.LENGTH_LONG).show();
+    }
+
+    //MapView Behaviour and functions
+    @Override
+    public void onMapReady(GoogleMap map) {
+        map.addMarker(new MarkerOptions().position(new LatLng(restaurant.getLat(),restaurant.getLon())).title(restaurant.getName()));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(restaurant.getLat(),restaurant.getLon()),15.0f));
+        map.getUiSettings().setZoomControlsEnabled(true);
+        map.getUiSettings().setMapToolbarEnabled(true);
+        map.getUiSettings().setMyLocationButtonEnabled(true);
+      map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
+          @Override
+          public void onPoiClick(PointOfInterest pointOfInterest) {
+            map.animateCamera(CameraUpdateFactory.newLatLng(pointOfInterest.latLng));
+          }
+      });
+      map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+          @Override
+          public void onMapLongClick(LatLng latLng) {
+              map.addMarker(new MarkerOptions().position(latLng));
+          }
+      });
+    }
+
+
+
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+
+        Bundle mapViewBundle = outState.getBundle(Config.MAPVIEW_BUNDLE_KEY);
+        if(mapViewBundle == null){
+            mapViewBundle = new Bundle();
+            outState.putBundle(Config.MAPVIEW_BUNDLE_KEY, mapViewBundle);
+        }
+        mMapView.onSaveInstanceState(mapViewBundle);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.onResume();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mMapView.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mMapView.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        mMapView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        mMapView.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mMapView.onLowMemory();
     }
 }

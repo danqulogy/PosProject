@@ -16,7 +16,8 @@ public class Config {
     public static String FILE_FAV_PLACES = "favPlaces.csv";
     public static String FILE_RESERVATIONS = "reservations.csv";
 
-
+    //MapView Bundle Key
+    public static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     //  *STANDARD URL*  //
     //server URL
     public static String SERVER_URL = "http://varchar42.me:4242/";

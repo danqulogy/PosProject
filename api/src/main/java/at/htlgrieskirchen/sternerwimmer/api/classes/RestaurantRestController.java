@@ -50,7 +50,7 @@ public class RestaurantRestController {
 
     }
 
-    @GetMapping("getTenNearestRestaurantsByAddress")
+    @GetMapping("/getTenNearestRestaurantsByAddress")
     public List<Restaurant> findTenNearestRestaurantsByAddress(@RequestParam(value = "address") String address, @RequestParam(value = "distance", defaultValue = "25000") String distance) {
         try {
             HttpURLConnection httpURLConnection = (HttpURLConnection) new URL("https://eu1.locationiq.com/v1/search.php?key=897f819f68407b&q=" + address + "&format=json&exclude={icon}").openConnection();

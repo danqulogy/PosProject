@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activities.ReservationDetailActivity">
-
     <TextView
         android:id="@+id/reservation_detail_tv1"
         android:layout_width="match_parent"
@@ -102,12 +101,29 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="338dp"
+        android:layout_marginTop="40sp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="5sp">
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/reservation_detail_mapView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/reservation_detail_cancel"
+        style="@style/Widget.AppCompat.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:layout_marginTop="50sp"
+        android:layout_marginTop="30sp"
         android:layout_marginEnd="30sp"
-        android:text="@string/cancelReservationButton" />
+        android:text="@string/cancelReservationButton"
+        android:textColor="#FF0404" />
 </LinearLayout>
