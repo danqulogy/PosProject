@@ -51,11 +51,10 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     while ((x = is.read()) != -1) {
                         sb.append((char) x);
                     }
-
                     Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
                     TypeToken<Reservation> typeToken = new TypeToken<Reservation>() {};
-
                     return gson.fromJson(sb.toString(), typeToken.getType());
+
                 } catch (Exception e) {
                     Log.e("doInBackground-nearestRestaurant", "GETTING failed with connection; Error-Massage: " + e.getMessage());
                     e.printStackTrace();
