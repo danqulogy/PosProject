@@ -36,19 +36,19 @@ import java.util.Objects;
 public class MainFragment extends Fragment {
 
     private ListView listView;
-    private List<Restaurant> restaurants = new ArrayList<>();
+    private List<Restaurant> restaurants;
     private OnSelectionChangedListener listener;
     private MainLVAdapter adapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         initializeView(view);
 
         return view;
     }
 
-    private void initializeView(View givenView){
+    private void initializeView(View givenView) {
         listView = givenView.findViewById(R.id.main_fragment_listview);
         listView.setOnItemClickListener((parent, view, position, id) -> {
             Restaurant restaurant = restaurants.get(position);
@@ -57,23 +57,19 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(@NonNull Context context){
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if(context instanceof OnSelectionChangedListener){
+        if (context instanceof OnSelectionChangedListener) {
             listener = (OnSelectionChangedListener) context;
-        }else{
+        } else {
             Log.e("MainFragment-onAttach", "Activity does not implement OnSelectionChangedListener");
         }
     }
 
-    public void updateLV(List<Restaurant> restaurants){
+    public void updateLV(List<Restaurant> restaurants) {
         this.restaurants = restaurants;
 
-        if(adapter == null){
-            adapter = new MainLVAdapter(requireActivity(), R.layout.main_fragment_lv_item, this.restaurants);
-            listView.setAdapter(adapter);
-        }else{
-            adapter.notifyDataSetChanged();
-        }
+        adapter = new MainLVAdapter(requireActivity(), R.layout.main_fragment_lv_item, this.restaurants);
+        listView.setAdapter(adapter);
     }
 }
