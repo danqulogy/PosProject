@@ -34,7 +34,7 @@
 
         <CalendarView
             android:id="@+id/reservation_send_calendar"
-            android:layout_width="wrap_content"
+            android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="11sp"
             android:layout_weight="1" />
