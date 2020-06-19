@@ -8,4 +8,8 @@
     <string name="intPlaceholder">0</string>
     <string name="tableItem">Table %1$x</string>
     <string name="persons">%1$x persons</string>
+    <string name="refresh">Refresh</string>
+    <string name="tableFor">A table for</string>
+    <string name="cancelButton">Cancel Reservation</string>
+    <string name="setReserved">Set Reserved</string>
 </resources>

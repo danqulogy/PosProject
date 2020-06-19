@@ -11,6 +11,9 @@
         android:id="@+id/activity_table_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="5sp"
+        android:layout_marginTop="10sp"
+        android:layout_marginBottom="15sp"
         android:text="@string/tableName"
         android:textSize="24sp" />
 

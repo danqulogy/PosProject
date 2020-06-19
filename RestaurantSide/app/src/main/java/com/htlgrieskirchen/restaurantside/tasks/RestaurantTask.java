@@ -37,7 +37,7 @@ public class RestaurantTask extends AsyncTask<String, String, Restaurant> {
             case "GET":
                 try {
                     Log.d("doInBackground", "Opening connection");
-                    URL url = new URL(Config.SERVER_URL + Config.RESTAURANT_PUT_URL + Config.DBID);
+                    URL url = new URL(Config.SERVER_URL + Config.RESTAURANT_BY_RESTAURANT_NUMBER+ Config.RESTAURANT_NUMBER);
                     Log.d("doInBackground", "URL: " + url.toString());
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("GET");
@@ -55,7 +55,7 @@ public class RestaurantTask extends AsyncTask<String, String, Restaurant> {
 
                     return gson.fromJson(sb.toString(), typeToken.getType());
                 } catch (IOException ex) {
-                    Log.d("doInBackground", "DBID went wrong error massage: " + ex.getMessage());
+                    Log.d("doInBackground", "Restaurant Number went wrong error massage: " + ex.getMessage());
                 }
                 break;
         }
