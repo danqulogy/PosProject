@@ -14,7 +14,7 @@ public class Config {
 
     //files
     public static String FILE_FAV_PLACES = "favPlaces.csv";
-    public static String FILE_RESERVATIONS = "reservations.csv";
+    public static String FILE_RESERVATIONS = "reservations.json";
 
     //MapView Bundle Key
     public static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";

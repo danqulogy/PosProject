@@ -54,7 +54,7 @@ public class ReservationDetailActivity extends AppCompatActivity implements Call
         reservation = getIntent().getParcelableExtra("reservation");
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
     initGoogleMapView(savedInstanceState);
 

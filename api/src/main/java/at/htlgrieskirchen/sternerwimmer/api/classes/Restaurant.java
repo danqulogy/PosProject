@@ -11,17 +11,42 @@ public class Restaurant {
     public String lon;
     public String lat;
     public String name;
+    public String openingTimes;
+    public String infos;
     public List<Table> tables;
+
 
     public Restaurant() {
     }
 
-    public Restaurant(String restaurantNumber, String lon, String lat, String name, List<Table> tables) {
+    public Restaurant(String restaurantNumber, String lon, String lat, String name, String openingTimes, String infos, List<Table> tables) {
         this.restaurantNumber = restaurantNumber;
         this.lon = lon;
         this.lat = lat;
         this.name = name;
+        this.openingTimes = openingTimes;
+        this.infos = infos;
         this.tables = tables;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getOpeningTimes() {
+        return openingTimes;
+    }
+
+    public void setOpeningTimes(String openingTimes) {
+        this.openingTimes = openingTimes;
+    }
+
+    public String getInfos() {
+        return infos;
+    }
+
+    public void setInfos(String infos) {
+        this.infos = infos;
     }
 
     public List<Table> getTables() {

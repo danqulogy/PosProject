@@ -39,7 +39,7 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
             case "GET":
                 try {
                     Log.d("doInBackground", "Opening connection");
-                    URL url = new URL(Config.SERVER_URL + Config.RESERVATION_BY_ID_URL+strings[1]);
+                    URL url = new URL(Config.SERVER_URL + Config.RESERVATION_BY_ID_URL + strings[1]);
                     Log.d("doInBackground", "URL: " + url.toString());
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("GET");
@@ -52,7 +52,8 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                         sb.append((char) x);
                     }
                     Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
-                    TypeToken<Reservation> typeToken = new TypeToken<Reservation>() {};
+                    TypeToken<Reservation> typeToken = new TypeToken<Reservation>() {
+                    };
                     return gson.fromJson(sb.toString(), typeToken.getType());
 
                 } catch (Exception e) {
@@ -60,10 +61,33 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     e.printStackTrace();
                 }
                 break;
+
+            case "CHECKRESERVATION":
+                try {
+                    URL url = new URL(Config.SERVER_URL + Config.RESERVATION_BY_ID_URL + strings[1]);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("GET");
+                    int responseCode = con.getResponseCode();
+
+                    int x;
+                    InputStream is = con.getInputStream();
+                    StringBuilder sb = new StringBuilder();
+                    while ((x = is.read()) != -1) {
+                        sb.append((char) x);
+                    }
+                    Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
+                    TypeToken<Reservation> typeToken = new TypeToken<Reservation>() {
+                    };
+                    return gson.fromJson(sb.toString(), typeToken.getType());
+
+                }catch (Exception e){
+
+                }
+                break;
             case "DELETE":
                 try {
                     Log.d("doInBackground", "Opening connection");
-                    URL url = new URL(Config.SERVER_URL + Config.RESERVATION_DELETE_URL+strings[1]);
+                    URL url = new URL(Config.SERVER_URL + Config.RESERVATION_DELETE_URL + strings[1]);
                     Log.d("doInBackground", "URL: " + url.toString());
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("DELETE");
@@ -78,7 +102,7 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     }
 
                     Reservation outputReservation = new Reservation();
-                    if(responseCode == HttpURLConnection.HTTP_OK){
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
                         outputReservation.setTableNumber(-1);
                         outputReservation.setId(strings[1]);
                     }
@@ -94,9 +118,9 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
     }
 
     @Override
-    public void onPostExecute(Reservation reservation){
-        if(reservation != null){
+    public void onPostExecute(Reservation reservation) {
+        if (reservation != null) {
             callback.onSuccess(method, reservation);
-        }else callback.onFailure("An error occurred please try again!");
+        } else callback.onFailure("An error occurred please try again!");
     }
 }

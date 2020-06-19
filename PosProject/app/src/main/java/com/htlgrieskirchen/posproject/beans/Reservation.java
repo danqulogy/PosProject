@@ -11,6 +11,7 @@ public class Reservation implements Parcelable{
     private int restaurantNumber;
     private int tableNumber;
     private String id;
+    private String name;
     private int chairs;
     private LocalDateTime reservationStart;
     private LocalDateTime reservationEnd;
@@ -18,10 +19,11 @@ public class Reservation implements Parcelable{
     public Reservation() {
     }
 
-    public Reservation(int restaurantNumber, int tableNumber, String id, int chairs, LocalDateTime reservationStart, LocalDateTime reservationEnd) {
+    public Reservation(int restaurantNumber, int tableNumber, String id, String name, int chairs, LocalDateTime reservationStart, LocalDateTime reservationEnd) {
         this.restaurantNumber = restaurantNumber;
         this.tableNumber = tableNumber;
         this.id = id;
+        this.name = name;
         this.chairs = chairs;
         this.reservationStart = reservationStart;
         this.reservationEnd = reservationEnd;
@@ -31,6 +33,7 @@ public class Reservation implements Parcelable{
         restaurantNumber = in.readInt();
         tableNumber = in.readInt();
         id = in.readString();
+        name = in.readString();
         chairs = in.readInt();
         reservationStart = (LocalDateTime) in.readSerializable();
         reservationEnd = (LocalDateTime) in.readSerializable();
@@ -47,6 +50,14 @@ public class Reservation implements Parcelable{
             return new Reservation[size];
         }
     };
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getRestaurantNumber() {
         return restaurantNumber;
@@ -106,6 +117,7 @@ public class Reservation implements Parcelable{
         dest.writeInt(restaurantNumber);
         dest.writeInt(tableNumber);
         dest.writeString(id);
+        dest.writeString(name);
         dest.writeInt(chairs);
         dest.writeSerializable(reservationStart);
         dest.writeSerializable(reservationEnd);
