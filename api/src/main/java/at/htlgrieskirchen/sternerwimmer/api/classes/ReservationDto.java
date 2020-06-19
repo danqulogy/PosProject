@@ -4,14 +4,16 @@ public class ReservationDto {
     private String restaurantNumber;
     private String tableNumber;
     private String id;
+    private String name;
     private String chairs;
     private String reservationStart;
     private String reservationEnd;
 
-    public ReservationDto(String restaurantNumber, String tableNumber, String id, String chairs, String reservationStart, String reservationEnd) {
+    public ReservationDto(String restaurantNumber, String tableNumber, String id, String name, String chairs, String reservationStart, String reservationEnd) {
         this.restaurantNumber = restaurantNumber;
         this.tableNumber = tableNumber;
         this.id = id;
+        this.name = name;
         this.chairs = chairs;
         this.reservationStart = reservationStart;
         this.reservationEnd = reservationEnd;
@@ -30,6 +32,14 @@ public class ReservationDto {
                 ", reservationStart='" + reservationStart + '\'' +
                 ", reservationEnd='" + reservationEnd + '\'' +
                 '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getRestaurantNumber() {

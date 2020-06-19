@@ -41,7 +41,7 @@ public class ReservationRestController {
     @PutMapping("/addReservation")
     public Restaurant addReservation(@RequestBody ReservationDto reservationDto){
         Restaurant restaurant = restaurantRepository.findByRestaurantNumber(reservationDto.getRestaurantNumber());
-        restaurant.getTables().get(Integer.parseInt(reservationDto.getTableNumber())-1).getReservations().add(new Reservation(reservationDto.getRestaurantNumber(), reservationDto.getTableNumber(),reservationDto.getId(),reservationDto.getChairs(), reservationDto.getReservationStart(), reservationDto.getReservationEnd()));
+        restaurant.getTables().get(Integer.parseInt(reservationDto.getTableNumber())-1).getReservations().add(new Reservation(reservationDto.getRestaurantNumber(), reservationDto.getTableNumber(),reservationDto.getId(),reservationDto.getName(),reservationDto.getChairs(), reservationDto.getReservationStart(), reservationDto.getReservationEnd()));
         restaurantRepository.save(restaurant);
         return restaurant;
     }

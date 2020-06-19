@@ -97,6 +97,11 @@ public class RestaurantRestController {
         return restaurantRepository.findByName(name).getId();
     }
 
+    @GetMapping("/getByRestaurantNumber")
+    public Restaurant getByRestaurantNumber(@RequestParam(value = "restaurantNumber")String restaurantNumber){
+        return restaurantRepository.findByRestaurantNumber(restaurantNumber);
+    }
+
     @GetMapping("/findByName")
     public List<Restaurant> findByName(@RequestParam(value = "name") String name) {
         return restaurantRepository.findAll()

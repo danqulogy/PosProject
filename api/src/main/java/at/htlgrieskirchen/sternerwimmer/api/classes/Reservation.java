@@ -7,18 +7,21 @@ public class Reservation {
     public String restaurantNumber;
     public String tableNumber;
     public String id;
+    public String name;
     public String chairs;
     public String reservationStart;
     public String reservationEnd;
 
+
     public Reservation() {
     }
 
-    public Reservation(String restaurantNumber, String tableNumber, String id, String chairs, String reservationStart, String reservationEnd) {
+    public Reservation(String restaurantNumber, String tableNumber, String id, String name, String chairs, String reservationStart, String reservationEnd) {
         this.restaurantNumber = restaurantNumber;
         this.tableNumber = tableNumber;
-        this.chairs = chairs;
         this.id = id;
+        this.name = name;
+        this.chairs = chairs;
         this.reservationStart = reservationStart;
         this.reservationEnd = reservationEnd;
     }
@@ -69,6 +72,14 @@ public class Reservation {
 
     public void setReservationEnd(String reservationEnd) {
         this.reservationEnd = reservationEnd;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
