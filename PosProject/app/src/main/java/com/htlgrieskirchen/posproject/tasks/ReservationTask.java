@@ -12,9 +12,11 @@ import com.htlgrieskirchen.posproject.beans.Reservation;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
 import com.htlgrieskirchen.posproject.interfaces.CallbackReservation;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -108,6 +110,28 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     }
 
                     return outputReservation;
+                } catch (Exception e) {
+                    Log.e("doInBackground-nearestRestaurant", "GETTING failed with connection; Error-Massage: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                break;
+            case "PUT":
+                try {
+                    Log.d("doInBackground", "Opening connection");
+                    URL url = new URL(Config.SERVER_URL + Config.RESERVATION_ADD_URL);
+                    Log.d("doInBackground", "URL: " + url.toString());
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("PUT");
+                    con.setDoOutput(true);
+                    Log.d("doInBackground", "finished Opening connection");
+
+                    PrintWriter pw = new PrintWriter(con.getOutputStream());
+                    pw.write(strings[1]);
+                    pw.flush();
+
+                    int responseCode = con.getResponseCode();
+
+                    return (responseCode == HttpURLConnection.HTTP_OK)? new Reservation(): null;
                 } catch (Exception e) {
                     Log.e("doInBackground-nearestRestaurant", "GETTING failed with connection; Error-Massage: " + e.getMessage());
                     e.printStackTrace();

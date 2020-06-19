@@ -36,5 +36,7 @@
     <string name="cancelReservationButton">Cancel reservation</string>
     <string name="reservationID">ReservationID</string>
     <string name="loading">Loading…</string>
+    <string name="nameForReservation">Name for Reservation</string>
+    <string name="seats">Seats (e.g. 5)</string>
 
 </resources>

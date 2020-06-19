@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -57,13 +58,8 @@ public class DetailFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         if(requestCode == Config.RQ_RESERVATION_INTENT && resultCode == Activity.RESULT_OK){
-            Restaurant outputRestaurant = data.getParcelableExtra("restaurant");
-            if(restaurant != outputRestaurant){
-                RestaurantTask restaurantTask = new RestaurantTask();
-                Gson gson = new Gson();
-                String restaurantJson = gson.toJson(outputRestaurant);
-                restaurantTask.execute("PUT", restaurantJson);
-            }
+            String response = data.getStringExtra("response");
+            Toast.makeText(getActivity(), response, Toast.LENGTH_LONG).show();
         }
     }
 
