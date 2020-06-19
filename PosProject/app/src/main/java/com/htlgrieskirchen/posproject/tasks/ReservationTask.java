@@ -83,7 +83,7 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     return gson.fromJson(sb.toString(), typeToken.getType());
 
                 }catch (Exception e){
-
+                    Log.d("doInBackground", "CHECKRESERVATION failed, e-massage: "+e.getMessage());
                 }
                 break;
             case "DELETE":
@@ -123,6 +123,7 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("PUT");
                     con.setDoOutput(true);
+                    con.setRequestProperty("Content-Type", "application/json");
                     Log.d("doInBackground", "finished Opening connection");
 
                     PrintWriter pw = new PrintWriter(con.getOutputStream());
