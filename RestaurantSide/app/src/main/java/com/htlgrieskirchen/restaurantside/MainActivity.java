@@ -65,10 +65,14 @@ public class MainActivity extends AppCompatActivity implements RestaurantCallbac
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public void onSuccess(String method, Restaurant restaurant) {
         if(method.equals("GET")){
+
+            if(this.restaurant != null){
+                Toast.makeText(this, "Updated", Toast.LENGTH_LONG).show();
+            }
+
             this.restaurant = restaurant;
             this.tables = this.restaurant.getTables();
 

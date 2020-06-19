@@ -2,15 +2,18 @@ package com.htlgrieskirchen.restaurantside.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.htlgrieskirchen.restaurantside.Config;
 import com.htlgrieskirchen.restaurantside.R;
 import com.htlgrieskirchen.restaurantside.beans.Reservation;
 import com.htlgrieskirchen.restaurantside.beans.Restaurant;
@@ -25,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 public class ReservationActivity extends AppCompatActivity implements CallbackReservation {
 
     CallbackReservation callback = this;
+    private Reservation deleteReservation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +54,7 @@ public class ReservationActivity extends AppCompatActivity implements CallbackRe
             alert.setTitle("Cancel Reservation "+reservation.getId());
             alert.setMessage("Are you sure you want to cancel the reservation?");
             alert.setPositiveButton("Yes", (dialog, which) -> {
-                RestaurantHandler.deleteReservation(reservation);
+                deleteReservation = reservation;
                 ReservationTask task = new ReservationTask(callback);
                 task.execute("DELETE", reservation.getId());
             }).setNegativeButton("No", (dialog, which) -> dialog.cancel()).show();
@@ -61,7 +65,14 @@ public class ReservationActivity extends AppCompatActivity implements CallbackRe
     @Override
     public void onSuccess(String method, Reservation reservation) {
         if(method.equals("DELETE") && reservation != null){
+            RestaurantHandler.deleteReservation(deleteReservation);
             Toast.makeText(ReservationActivity.this, "Reservation canceled", Toast.LENGTH_LONG).show();
+
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("response", "delete");
+            returnIntent.putExtra("reservation", deleteReservation);
+            setResult(Config.RQ_RESERVATION_INTENT, returnIntent);
+            finish();
         }
     }
 

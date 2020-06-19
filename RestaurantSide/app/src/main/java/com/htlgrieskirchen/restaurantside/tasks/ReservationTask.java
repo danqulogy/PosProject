@@ -68,6 +68,7 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("PUT");
                     con.setDoOutput(true);
+                    con.setRequestProperty("Content-Type", "application/json");
                     Log.d("doInBackground", "finished Opening connection");
 
                     Log.d("doInBackground", strings[1]);

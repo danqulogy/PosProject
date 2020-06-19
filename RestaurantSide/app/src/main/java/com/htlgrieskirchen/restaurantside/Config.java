@@ -6,6 +6,9 @@ public class Config {
 
     public static String RESTAURANT_NUMBER = "1";
 
+    //ReQuest code for intents (100, 101, 102, ...)
+    public static int RQ_RESERVATION_INTENT = 100;
+
     //  *STANDARD URL*  //
     //server URL
     public static String SERVER_URL = "http://varchar42.me:4242/";

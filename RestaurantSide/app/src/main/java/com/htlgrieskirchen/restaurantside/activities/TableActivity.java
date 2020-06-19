@@ -2,6 +2,7 @@ package com.htlgrieskirchen.restaurantside.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,8 +15,15 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
+import com.htlgrieskirchen.restaurantside.Config;
 import com.htlgrieskirchen.restaurantside.R;
 import com.htlgrieskirchen.restaurantside.adapters.ReservationAdapter;
 import com.htlgrieskirchen.restaurantside.beans.Reservation;
@@ -28,15 +36,19 @@ import com.htlgrieskirchen.restaurantside.tasks.RestaurantTask;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Type;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class TableActivity extends AppCompatActivity implements CallbackReservation {
 
     private Table table;
     private CallbackReservation callback = this;
     private ReservationAdapter adapter;
+    private ListView listView;
+    private Reservation puttedReservation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +58,33 @@ public class TableActivity extends AppCompatActivity implements CallbackReservat
         table = getIntent().getParcelableExtra("table");
 
         ((TextView)findViewById(R.id.activity_table_name)).setText("Table "+table.getId());
-        ListView lv = findViewById(R.id.activity_table_lv);
+        listView = findViewById(R.id.activity_table_lv);
         adapter = new ReservationAdapter(this, R.layout.reservation_lv_item, table.getReservations());
-        lv.setAdapter(adapter);
+        listView.setAdapter(adapter);
 
-        lv.setOnItemClickListener((parent, view, position, id) -> {
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            this.table = RestaurantHandler.getRestaurant().getTables().get(table.getId()-1);
+
             Intent intent = new Intent(TableActivity.this, ReservationActivity.class);
             intent.putExtra("reservation", table.getReservations().get(position));
             startActivity(intent);
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Config.RQ_RESERVATION_INTENT && resultCode == Activity.RESULT_OK) {
+            String response = data.getStringExtra("response");
+            if(response != null && response.equals("delete")){
+                Reservation responseReservation = data.getParcelableExtra("reservation");
+
+                table = RestaurantHandler.getRestaurant().getTables().get(responseReservation.getTableNumber()-1);
+
+                adapter = new ReservationAdapter(this, R.layout.reservation_lv_item, table.getReservations());
+                listView.setAdapter(adapter);
+            }
+        }
     }
 
     @Override
@@ -77,15 +107,22 @@ public class TableActivity extends AppCompatActivity implements CallbackReservat
             LocalDateTime end = LocalDateTime.parse(now.plusDays(1).toLocalDate().format(date)+" 06:00", dtf);
             Reservation reservation = new Reservation(restaurant.getRestaurantNumber(), table.getId(), randomReservationId(), "INTERN", table.getChairsAvailable(), now, end);
 
-            RestaurantHandler.addReservation(reservation);
-            adapter.notifyDataSetChanged();
+            puttedReservation = reservation;
 
             ReservationTask reservationTask = new ReservationTask(callback);
 
-            Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))).create();
-            TypeToken<Reservation> typeToken = new TypeToken<Reservation>() {};
+            JsonSerializer<LocalDateTime> localDateTimeJsonSerializer = new JsonSerializer<LocalDateTime>() {
+                @Override
+                public JsonElement serialize(LocalDateTime src, Type typeOfSrc, JsonSerializationContext context) {
+                    return new JsonPrimitive(src.format(dtf));
+                }
+            };
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.registerTypeAdapter(LocalDateTime.class, localDateTimeJsonSerializer);
+            String string = gsonBuilder.create().toJson(reservation, new TypeToken<Reservation>() {
+            }.getType());
 
-            reservationTask.execute("PUT", gson.toJson(reservation, Reservation.class));
+            reservationTask.execute("PUT", string);
         }
 
         return super.onOptionsItemSelected(item);
@@ -109,6 +146,11 @@ public class TableActivity extends AppCompatActivity implements CallbackReservat
     public void onSuccess(String method, Reservation reservation) {
         if(method.equals("PUT") && reservation != null){
             Toast.makeText(this, "Table set as reserved", Toast.LENGTH_LONG).show();
+
+            RestaurantHandler.addReservation(puttedReservation);
+            adapter = new ReservationAdapter(this, R.layout.reservation_lv_item, RestaurantHandler.getRestaurant().getTables().get(puttedReservation.getTableNumber()-1).getReservations());
+            listView.setAdapter(adapter);
+
         }else{
             Toast.makeText(this, "Something went wrong please try again", Toast.LENGTH_LONG).show();
         }
