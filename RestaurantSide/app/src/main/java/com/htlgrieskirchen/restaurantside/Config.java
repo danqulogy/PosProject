@@ -4,7 +4,10 @@ package com.htlgrieskirchen.restaurantside;
 
 public class Config {
 
-    public static String DBID = "5ee89e3ee2f9872128e01252";
+    public static String RESTAURANT_NUMBER = "1";
+
+    //ReQuest code for intents (100, 101, 102, ...)
+    public static int RQ_RESERVATION_INTENT = 100;
 
     //  *STANDARD URL*  //
     //server URL
@@ -36,5 +39,7 @@ public class Config {
     //URL for restaurants by address
     public static String RESTAURANT_GET_BY_ADDRESS_URL1 = "restaurants/getTenNearestRestaurantsByAddress?address=";
     public static String RESTAURANT_GET_BY_ADDRESS_URL2 = "&distance=";
+    //URL for restaurant by restaurantNumber
+    public static String RESTAURANT_BY_RESTAURANT_NUMBER = "restaurants/getByRestaurantNumber?restaurantNumber=";
 
 }

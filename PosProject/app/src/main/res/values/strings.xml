@@ -39,5 +39,7 @@
     <string name="setDate">Set Date</string>
     <string name="restaurant">Restaurant: </string>
     <string name="name">Name</string>
+    <string name="nameForReservation">Name for Reservation</string>
+    <string name="seats">Seats (e.g. 5)</string>
 
 </resources>

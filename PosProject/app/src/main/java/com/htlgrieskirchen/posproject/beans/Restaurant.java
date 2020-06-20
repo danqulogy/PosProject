@@ -13,17 +13,21 @@ public class Restaurant implements Parcelable{
     private double lon;
     private double lat;
     private String name;
+    private String openingTimes;
+    private String infos;
     private List<Table> tables;
 
     public Restaurant() {
     }
 
-    public Restaurant(String id, int restaurantNumber, double lon, double lat, String name, List<Table> tables) {
+    public Restaurant(String id, int restaurantNumber, double lon, double lat, String name, String openingTimes, String infos, List<Table> tables) {
         this.id = id;
         this.restaurantNumber = restaurantNumber;
         this.lon = lon;
         this.lat = lat;
         this.name = name;
+        this.openingTimes = openingTimes;
+        this.infos = infos;
         this.tables = tables;
     }
 
@@ -33,6 +37,8 @@ public class Restaurant implements Parcelable{
         lon = in.readDouble();
         lat = in.readDouble();
         name = in.readString();
+        openingTimes = in.readString();
+        infos = in.readString();
         tables = in.readParcelableList(new ArrayList<>(), Table.class.getClassLoader());
     }
 
@@ -88,6 +94,22 @@ public class Restaurant implements Parcelable{
         this.name = name;
     }
 
+    public String getOpeningTimes() {
+        return openingTimes;
+    }
+
+    public void setOpeningTimes(String openingTimes) {
+        this.openingTimes = openingTimes;
+    }
+
+    public String getInfos() {
+        return infos;
+    }
+
+    public void setInfos(String infos) {
+        this.infos = infos;
+    }
+
     public List<Table> getTables() {
         return tables;
     }
@@ -108,6 +130,8 @@ public class Restaurant implements Parcelable{
         dest.writeDouble(lon);
         dest.writeDouble(lat);
         dest.writeString(name);
+        dest.writeString(openingTimes);
+        dest.writeString(infos);
         dest.writeParcelableList(tables, flags);
     }
 }

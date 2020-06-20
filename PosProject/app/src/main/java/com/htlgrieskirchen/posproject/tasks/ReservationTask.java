@@ -5,10 +5,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.htlgrieskirchen.posproject.Config;
 import com.htlgrieskirchen.posproject.beans.Reservation;
@@ -16,17 +13,12 @@ import com.htlgrieskirchen.posproject.beans.Restaurant;
 import com.htlgrieskirchen.posproject.interfaces.CallbackReservation;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.lang.reflect.Type;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -72,41 +64,6 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                 }
                 break;
 
-
-            case "PUT":
-                try {
-                    URL url = new URL(Config.SERVER_URL + Config.RESERVATION_ADD_URL);
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestMethod("PUT");
-
-                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(con.getOutputStream()));
-                    bw.write(strings[1]);
-                    bw.flush();
-                    bw.close();
-
-                    BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line = "";
-                    while (line != null) {
-                        line = br.readLine();
-                        stringBuilder.append(line);
-                    }
-
-                    GsonBuilder gsonBuilder = new GsonBuilder();
-                    gsonBuilder.registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
-                        @Override
-                        public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                            return LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-                        }
-                    });
-                    Gson gson = gsonBuilder.create();
-                    //VERARBEITUNG VON REQUEST RETURN
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-
             case "CHECKRESERVATION":
                 try {
                     URL url = new URL(Config.SERVER_URL + Config.RESERVATION_BY_ID_URL + strings[1]);
@@ -125,8 +82,8 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     };
                     return gson.fromJson(sb.toString(), typeToken.getType());
 
-                } catch (Exception e) {
-
+                }catch (Exception e){
+                    Log.d("doInBackground", "CHECKRESERVATION failed, e-massage: "+e.getMessage());
                 }
                 break;
             case "DELETE":
@@ -153,6 +110,29 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     }
 
                     return outputReservation;
+                } catch (Exception e) {
+                    Log.e("doInBackground-nearestRestaurant", "GETTING failed with connection; Error-Massage: " + e.getMessage());
+                    e.printStackTrace();
+                }
+                break;
+            case "PUT":
+                try {
+                    Log.d("doInBackground", "Opening connection");
+                    URL url = new URL(Config.SERVER_URL + Config.RESERVATION_ADD_URL);
+                    Log.d("doInBackground", "URL: " + url.toString());
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("PUT");
+                    con.setDoOutput(true);
+                    con.setRequestProperty("Content-Type", "application/json");
+                    Log.d("doInBackground", "finished Opening connection");
+
+                    PrintWriter pw = new PrintWriter(con.getOutputStream());
+                    pw.write(strings[1]);
+                    pw.flush();
+
+                    int responseCode = con.getResponseCode();
+
+                    return (responseCode == HttpURLConnection.HTTP_OK)? new Reservation(): null;
                 } catch (Exception e) {
                     Log.e("doInBackground-nearestRestaurant", "GETTING failed with connection; Error-Massage: " + e.getMessage());
                     e.printStackTrace();
