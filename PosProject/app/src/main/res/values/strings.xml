@@ -20,7 +20,7 @@
     <string name="doublePlaceHolder">0.000</string>
     <string name="titleActivityFavPlaces">FavPlacesActivity</string>
     <string name="reservationButton">RESERVE</string>
-    <string name="persons">Persons:</string>
+    <string name="persons">Persons</string>
     <string name="intPlaceHolder">0</string>
     <string name="start">Start-Time</string>
     <string name="end">End-Time</string>
@@ -36,5 +36,8 @@
     <string name="cancelReservationButton">Cancel reservation</string>
     <string name="reservationID">ReservationID</string>
     <string name="loading">Loading…</string>
+    <string name="setDate">Set Date</string>
+    <string name="restaurant">Restaurant: </string>
+    <string name="name">Name</string>
 
 </resources>
