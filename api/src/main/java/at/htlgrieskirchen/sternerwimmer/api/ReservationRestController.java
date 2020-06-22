@@ -4,9 +4,12 @@ import at.htlgrieskirchen.sternerwimmer.api.classes.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -30,20 +33,50 @@ public class ReservationRestController {
 
     @DeleteMapping("/deleteReservation")
     public List<Restaurant> deleteReserevationById(@RequestParam(value = "id") String id) {
-       Reservation reservation = getReservationById(id);
-       Restaurant restaurant = restaurantRepository.findByRestaurantNumber(reservation.getRestaurantNumber());
-       Table table = restaurant.getTables().get(Integer.parseInt(reservation.getTableNumber())-1);
-       restaurant.getTables().get(Integer.parseInt(reservation.getTableNumber()) - 1).getReservations().remove(reservation);
+        Reservation reservation = getReservationById(id);
+        Restaurant restaurant = restaurantRepository.findByRestaurantNumber(reservation.getRestaurantNumber());
+        Table table = restaurant.getTables().get(Integer.parseInt(reservation.getTableNumber()) - 1);
+        restaurant.getTables().get(Integer.parseInt(reservation.getTableNumber()) - 1).getReservations().remove(reservation);
         restaurantRepository.save(restaurant);
-       return restaurantRepository.findAll();
+        return restaurantRepository.findAll();
     }
 
     @PutMapping("/addReservation")
-    public ReservationDto addReservation(@RequestBody ReservationDto reservationDto){
+    public ReservationDto addReservation(@RequestBody ReservationDto reservationDto) {
         Restaurant restaurant = restaurantRepository.findByRestaurantNumber(reservationDto.getRestaurantNumber());
-        restaurant.getTables().get(Integer.parseInt(reservationDto.getTableNumber())-1).getReservations().add(new Reservation(reservationDto.getRestaurantNumber(), reservationDto.getTableNumber(),reservationDto.getId(),reservationDto.getName(),reservationDto.getChairs(), reservationDto.getReservationStart(), reservationDto.getReservationEnd()));
-        restaurantRepository.save(restaurant);
-        return reservationDto;
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+                    LocalDateTime start = LocalDateTime.parse(reservationDto.getReservationStart(), dtf);
+                    LocalDateTime end = LocalDateTime.parse(reservationDto.getReservationEnd(), dtf);
+                    List<Reservation> reservations = new ArrayList<>();
+                    List<String> tables = new ArrayList<>();
+                    restaurant.getTables().stream()
+                            .sorted((Comparator.comparingInt(t -> Integer.parseInt(t.getChairsAvailable()))))
+                            .filter(t -> Integer.parseInt(t.getChairsAvailable()) >= Integer.parseInt(reservationDto.getChairs())).forEach(t -> reservations.addAll(t.getReservations()));
+                    for (Reservation r :
+                            reservations) {
+                        //a.start < b.end && b.start < a.end
+                        LocalDateTime startR = LocalDateTime.parse(r.getReservationStart(), dtf);
+                        LocalDateTime endR = LocalDateTime.parse(r.getReservationEnd(), dtf);
+                        boolean overlap = start.isBefore(endR) && startR.isBefore(end);
+                        if (overlap) {
+                            if (tables.contains(r.getTableNumber())) {
+                                tables.remove(r.getTableNumber());
+                            }
+                        } else if (!overlap) {
+                            if (tables.contains(r.getTableNumber())) {
+
+                            } else {
+                    tables.add(r.getTableNumber());
+                }
+            }
+            int tableIndex = Integer.parseInt(tables.stream().findFirst().orElse("-1")) - 1;
+            if (tableIndex > -1) {
+                restaurant.getTables().get(tableIndex).getReservations().add(new Reservation(reservationDto.getRestaurantNumber(), String.valueOf(tableIndex + 1), reservationDto.getId(), reservationDto.getName(), reservationDto.getChairs(), reservationDto.getReservationStart(), reservationDto.getReservationEnd()));
+                reservationDto.setTableNumber(String.valueOf(tableIndex+1));
+                return reservationDto;
+            } else return null;
+        }
+        return null;
     }
 }
 
