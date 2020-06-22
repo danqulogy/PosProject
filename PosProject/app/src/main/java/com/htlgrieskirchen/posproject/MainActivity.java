@@ -256,7 +256,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             case "NEAREST":
                 LinearLayout layout = findViewById(R.id.fragment_main_tv_layout);
                 if (restaurants == null || restaurants.size() == 0) {
-                    Toast.makeText(this, "There is no Restaurant around in the selected radius", Toast.LENGTH_LONG).show();
                     layout.setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.fragment_main_tv)).setText(getResources().getString(R.string.increaseSearch));
                 }else{
