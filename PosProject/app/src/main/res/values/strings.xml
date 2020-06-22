@@ -46,5 +46,7 @@
     <string name="noOpeningTimeInformation">No information about opening time</string>
     <string name="location">Location:</string>
     <string name="selectTime">SELECT TIME</string>
+    <string name="welcome">Welcome! \n\nWith this app you can search for your nearest Restaurants.\n\nYou can add your favourite Restaurants via search \n\nYou can even Reserve \nin all Restaurants!</string>
+    <string name="increaseSearch">No Restaurants in the selected radius! \n\nYou can increase the selected Radius in the Settings.</string>
 
 </resources>

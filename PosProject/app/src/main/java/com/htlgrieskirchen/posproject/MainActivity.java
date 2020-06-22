@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.htlgrieskirchen.posproject.activities.DetailActivity;
@@ -38,6 +40,8 @@ import com.htlgrieskirchen.posproject.interfaces.OnSelectionChangedListener;
 import com.htlgrieskirchen.posproject.services.NotificationService;
 import com.htlgrieskirchen.posproject.settings.SettingsActivity;
 import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
+
+import org.w3c.dom.Text;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -250,9 +254,15 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 else mainFragment.updateLV(restaurants);
                 break;
             case "NEAREST":
-                if (restaurants == null || restaurants.size() == 0)
+                LinearLayout layout = findViewById(R.id.fragment_main_tv_layout);
+                if (restaurants == null || restaurants.size() == 0) {
                     Toast.makeText(this, "There is no Restaurant around in the selected radius", Toast.LENGTH_LONG).show();
-                else mainFragment.updateLV(restaurants);
+                    layout.setVisibility(View.VISIBLE);
+                    ((TextView) findViewById(R.id.fragment_main_tv)).setText(getResources().getString(R.string.increaseSearch));
+                }else{
+                    mainFragment.updateLV(restaurants);
+                    layout.setVisibility(View.GONE);
+                }
                 break;
             case "GETBYADDRESS":
                 if (restaurants == null)
