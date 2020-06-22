@@ -3,11 +3,9 @@ package com.htlgrieskirchen.posproject.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,13 +14,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.htlgrieskirchen.posproject.Config;
 import com.htlgrieskirchen.posproject.R;
 import com.htlgrieskirchen.posproject.beans.Reservation;
@@ -35,7 +29,6 @@ import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -108,11 +101,14 @@ public class ReservationDetailActivity extends AppCompatActivity implements Call
             if(reservation.getTableNumber() == -1){
                 ReservationHandler.deleteReservation(reservation.getId());
                 try {
-                    ReservationHandler.safeReservations(openFileOutput(Config.FILE_RESERVATIONS, MODE_PRIVATE));
+                    ReservationHandler.saveReservations(openFileOutput(Config.FILE_RESERVATIONS, MODE_PRIVATE));
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(this, "Your reservation has been canceled successfully", Toast.LENGTH_LONG).show();
+             //   Toast.makeText(this, "Your reservation has been canceled successfully", Toast.LENGTH_LONG).show();
+                setResult(Activity.RESULT_OK);
+
+                finish();
             }
             else Toast.makeText(this, "Your reservation couldn't be canceled", Toast.LENGTH_LONG).show();
         }

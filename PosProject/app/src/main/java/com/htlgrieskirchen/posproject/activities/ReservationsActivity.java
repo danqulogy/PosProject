@@ -2,20 +2,19 @@ package com.htlgrieskirchen.posproject.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.gson.internal.$Gson$Preconditions;
 import com.htlgrieskirchen.posproject.Config;
 import com.htlgrieskirchen.posproject.R;
 import com.htlgrieskirchen.posproject.adapters.ReservationsLVAdapter;
@@ -41,7 +40,7 @@ public class ReservationsActivity extends AppCompatActivity implements CallbackR
         setContentView(R.layout.activity_reservations);
 
         reservations = ReservationHandler.getReservationList();
-        if(reservations == null){
+        if (reservations == null) {
             reservations = new ArrayList<>();
         }
 
@@ -53,7 +52,7 @@ public class ReservationsActivity extends AppCompatActivity implements CallbackR
             Reservation chosen = reservations.get(position);
             Intent intent = new Intent(ReservationsActivity.this, ReservationDetailActivity.class);
             intent.putExtra("reservation", chosen);
-            startActivity(intent);
+            startActivityForResult(intent, Config.RQ_RESERVATION_CANCEL_INTENT);
         });
     }
 
@@ -68,7 +67,7 @@ public class ReservationsActivity extends AppCompatActivity implements CallbackR
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
-        if(itemId == R.id.reservations_menu_add){
+        if (itemId == R.id.reservations_menu_add) {
             final View view = getLayoutInflater().inflate(R.layout.dialog_add_reservation, null);
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setView(view);
@@ -76,13 +75,13 @@ public class ReservationsActivity extends AppCompatActivity implements CallbackR
             alert.setPositiveButton("Submit", (dialog, which) -> {
                 EditText et = view.findViewById(R.id.dialog_add_reservation_et);
                 String reservationId = et.getText().toString();
-                if(!reservationId.isEmpty() && reservationId.length() > 4){
+                if (!reservationId.isEmpty() && reservationId.length() > 4) {
                     ReservationTask task = new ReservationTask(callback);
                     task.execute("GET", reservationId);
                 }
             }).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).show();
 
-        }else if(itemId == R.id.reservation_menu_info){
+        } else if (itemId == R.id.reservation_menu_info) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Infos about your Reservations");
             alert.setMessage(R.string.reservationsInfo);
@@ -95,21 +94,21 @@ public class ReservationsActivity extends AppCompatActivity implements CallbackR
 
     @Override
     public void onSuccess(String method, Reservation reservation) {
-        if(method.equals("GET")){
+        if (method.equals("GET")) {
             this.reservations = ReservationHandler.getReservationList();
             boolean b = true;
 
-            for(Reservation r: reservations){
+            for (Reservation r : reservations) {
                 if (r.getId().equals(reservation.getId())) {
                     b = false;
                     break;
                 }
             }
 
-            if(b){
+            if (b) {
                 ReservationHandler.addReservation(reservation);
                 try {
-                    ReservationHandler.safeReservations(openFileOutput(Config.FILE_RESERVATIONS, MODE_PRIVATE));
+                    ReservationHandler.saveReservations(openFileOutput(Config.FILE_RESERVATIONS, MODE_PRIVATE));
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -117,12 +116,25 @@ public class ReservationsActivity extends AppCompatActivity implements CallbackR
                 this.reservations = ReservationHandler.getReservationList();
                 adapter.notifyDataSetChanged();
 
-            }else Toast.makeText(this, "Reservation already exists", Toast.LENGTH_LONG).show();
+            } else Toast.makeText(this, "Reservation already exists", Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     public void onFailure(String response) {
-        Toast.makeText(this,response, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, response, Toast.LENGTH_LONG).show();
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Log.d(getClass().getSimpleName(), "onActivityResult entered:");
+        if (resultCode == Activity.RESULT_OK) {
+          //  String response = data.getStringExtra("response");
+            // Toast.makeText(this, response, Toast.LENGTH_LONG).show();
+        adapter.notifyDataSetChanged();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

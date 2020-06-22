@@ -33,6 +33,8 @@ import com.htlgrieskirchen.posproject.beans.Restaurant;
 import com.htlgrieskirchen.posproject.handlers.ReservationHandler;
 import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
+import java.io.FileNotFoundException;
+
 public class DetailFragment extends Fragment implements OnMapReadyCallback {
 
     private TextView tvName;
@@ -40,6 +42,7 @@ public class DetailFragment extends Fragment implements OnMapReadyCallback {
     private Button reserve;
     private Restaurant restaurant;
     MapView mMapView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
@@ -57,22 +60,31 @@ public class DetailFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == Config.RQ_RESERVATION_INTENT && resultCode == Activity.RESULT_OK){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == Activity.RESULT_OK) {
             String response = data.getStringExtra("response");
             Toast.makeText(getActivity(), response, Toast.LENGTH_LONG).show();
 
             Reservation reservation = data.getParcelableExtra("reservation");
-            if(reservation != null) ReservationHandler.addReservation(reservation);
+            if (reservation != null) {
+                ReservationHandler.addReservation(reservation);
+                try {
+                    ReservationHandler.saveReservations(getContext().openFileOutput(Config.FILE_RESERVATIONS, Context.MODE_PRIVATE));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-    private void initializeView(View view){
+
+    private void initializeView(View view) {
         tvName = view.findViewById(R.id.detail_fragment_name);
         tvInfo = view.findViewById(R.id.detail_fragment_info);
     }
 
-    public void showInformation(Restaurant restaurant){
+    public void showInformation(Restaurant restaurant) {
         this.restaurant = restaurant;
         tvName.setText(restaurant.getName());
         tvInfo.setText(restaurant.getInfos());
@@ -82,8 +94,8 @@ public class DetailFragment extends Fragment implements OnMapReadyCallback {
     //MapView Behaviour and functions
     @Override
     public void onMapReady(GoogleMap map) {
-        map.addMarker(new MarkerOptions().position(new LatLng(restaurant.getLat(),restaurant.getLon())).title(restaurant.getName()));
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(restaurant.getLat(),restaurant.getLon()),15.0f));
+        map.addMarker(new MarkerOptions().position(new LatLng(restaurant.getLat(), restaurant.getLon())).title(restaurant.getName()));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(restaurant.getLat(), restaurant.getLon()), 15.0f));
         map.getUiSettings().setZoomControlsEnabled(true);
         map.getUiSettings().setMapToolbarEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(true);
@@ -102,9 +114,9 @@ public class DetailFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-    private void initGoogleMapView(Bundle savedInstanceState){
+    private void initGoogleMapView(Bundle savedInstanceState) {
         Bundle mapViewBundle = null;
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(Config.MAPVIEW_BUNDLE_KEY);
         }
         mMapView.onCreate(mapViewBundle);
@@ -113,11 +125,11 @@ public class DetailFragment extends Fragment implements OnMapReadyCallback {
 
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState){
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         Bundle mapViewBundle = outState.getBundle(Config.MAPVIEW_BUNDLE_KEY);
-        if(mapViewBundle == null){
+        if (mapViewBundle == null) {
             mapViewBundle = new Bundle();
             outState.putBundle(Config.MAPVIEW_BUNDLE_KEY, mapViewBundle);
         }

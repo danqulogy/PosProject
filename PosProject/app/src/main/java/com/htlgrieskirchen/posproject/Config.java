@@ -8,6 +8,7 @@ public class Config {
 
     //ReQuest code for intents (100, 101, 102, ...)
     public static int RQ_RESERVATION_INTENT = 100;
+    public static int RQ_RESERVATION_CANCEL_INTENT = 101;
 
     //ResultCode as [Binary] (1000, 1001, 1010, ...)
     public static int RC_SETTINGS = 1000;

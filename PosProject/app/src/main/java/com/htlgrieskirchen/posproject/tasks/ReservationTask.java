@@ -15,10 +15,12 @@ import com.htlgrieskirchen.posproject.interfaces.CallbackReservation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.Buffer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -82,8 +84,8 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     };
                     return gson.fromJson(sb.toString(), typeToken.getType());
 
-                }catch (Exception e){
-                    Log.d("doInBackground", "CHECKRESERVATION failed, e-massage: "+e.getMessage());
+                } catch (Exception e) {
+                    Log.d("doInBackground", "CHECKRESERVATION failed, e-massage: " + e.getMessage());
                 }
                 break;
             case "DELETE":
@@ -126,10 +128,6 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     con.setRequestProperty("Content-Type", "application/json");
                     Log.d("doInBackground", "finished Opening connection");
 
-                    Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
-                    TypeToken<Reservation> typeToken = new TypeToken<Reservation>() {};
-
-                    Reservation reservation = gson.fromJson(strings[1], typeToken.getType());
 
                     PrintWriter pw = new PrintWriter(con.getOutputStream());
                     pw.write(strings[1]);
@@ -137,7 +135,16 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
 
                     int responseCode = con.getResponseCode();
 
-                    return (responseCode == HttpURLConnection.HTTP_OK)? reservation: null;
+
+                    Gson gson = new GsonBuilder()
+                            .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
+                    TypeToken<Reservation> typeToken = new TypeToken<Reservation>() {
+                    };
+                    BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                    String line = br.readLine();
+
+                    Reservation reservation = gson.fromJson(line, typeToken.getType());
+                    return (responseCode == HttpURLConnection.HTTP_OK) ? reservation : null;
                 } catch (Exception e) {
                     Log.e("doInBackground-nearestRestaurant", "GETTING failed with connection; Error-Massage: " + e.getMessage());
                     e.printStackTrace();

@@ -72,7 +72,7 @@
 
         <TextView
             android:id="@+id/textView6"
-            android:layout_width="wrap_content"
+            android:layout_width="59dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/date"
@@ -86,7 +86,8 @@
             android:ems="10"
             android:hint="@string/datePlaceHolder"
             android:textAlignment="textStart"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:layout_marginStart="21dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -103,7 +104,10 @@
             android:text="@string/start"
             android:textSize="20sp" />
 
-        <EditText
+
+
+
+        <TextView
             android:id="@+id/reservation_send_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -111,8 +115,15 @@
             android:ems="3"
             android:hint="@string/timePlaceHolder"
             android:importantForAutofill="no"
-            android:inputType="textPersonName"
+            android:textSize="20sp"
             android:textAlignment="center" />
+
+        <Button
+        android:id="@+id/reservation_send_button_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SELECT TIME" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -129,18 +140,23 @@
             android:text="@string/end"
             android:textSize="20sp" />
 
-        <EditText
-            android:id="@+id/reservation_send_end"
+         <TextView
+             android:id="@+id/reservation_send_end"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="10sp"
+             android:ems="3"
+             android:hint="@string/timePlaceHolder"
+             android:importantForAutofill="no"
+            android:textSize="20sp"
+             android:textAlignment="center" />
+        <Button
+            android:id="@+id/reservation_send_button_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10sp"
-            android:ems="3"
-            android:hint="@string/timePlaceHolder"
-            android:importantForAutofill="no"
-            android:inputType="textPersonName"
-            android:textAlignment="center" />
-
+            android:text="SELECT TIME" />
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -155,16 +171,9 @@
             android:text="@string/persons"
             android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/reservation_send_persons"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/personsForButton"
-            android:textSize="20sp" />
-
         <Spinner
             android:id="@+id/reservation_send_persons_spinner"
-            android:layout_width="30sp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:minWidth="30sp"
             android:textAlignment="center" />

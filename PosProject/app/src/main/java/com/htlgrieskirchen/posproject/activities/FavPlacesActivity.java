@@ -1,13 +1,11 @@
 package com.htlgrieskirchen.posproject.activities;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -24,7 +22,6 @@ import com.htlgrieskirchen.posproject.interfaces.CallbackRestaurant;
 import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FavPlacesActivity extends AppCompatActivity implements CallbackRestaurant {
@@ -114,7 +111,7 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
                 if(b){
                     RestaurantInfoHandler.addRestaurantInfo(restaurant);
                     try {
-                        RestaurantInfoHandler.safeCurrentRestaurants(openFileOutput(Config.FILE_FAV_PLACES, MODE_PRIVATE));
+                        RestaurantInfoHandler.saveCurrentRestaurants(openFileOutput(Config.FILE_FAV_PLACES, MODE_PRIVATE));
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }

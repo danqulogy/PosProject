@@ -41,7 +41,7 @@ public class ReservationHandler {
         }
     }
 
-    public static void safeReservations(OutputStream os) {
+    public static void saveReservations(OutputStream os) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os))) {
             JsonSerializer<LocalDateTime> localDateTimeJsonSerializer = new JsonSerializer<LocalDateTime>() {

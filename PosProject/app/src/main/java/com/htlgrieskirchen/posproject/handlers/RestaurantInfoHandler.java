@@ -19,7 +19,7 @@ public class RestaurantInfoHandler {
 
     private static  List<RestaurantInfo> restaurantInfos = new ArrayList<>();
 
-    public static void safeCurrentRestaurants(OutputStream outputStream){
+    public static void saveCurrentRestaurants(OutputStream outputStream){
         try(PrintWriter pw = new PrintWriter(outputStream)){
             Gson gson = new Gson();
             List<RestaurantInfo> outputList = new ArrayList<>();
