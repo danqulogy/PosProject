@@ -45,5 +45,6 @@
     <string name="personsForButton">[PERSONS]</string>
     <string name="noOpeningTimeInformation">No information about opening time</string>
     <string name="location">Location:</string>
+    <string name="selectTime">SELECT TIME</string>
 
 </resources>

@@ -50,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10sp"
-        android:layout_marginTop="15sp"
+        android:layout_marginTop="10sp"
         android:orientation="horizontal">
 
         <Button
@@ -72,9 +72,8 @@
 
         <TextView
             android:id="@+id/textView6"
-            android:layout_width="59dp"
+            android:layout_width="100sp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/date"
             android:textSize="20sp" />
 
@@ -82,12 +81,10 @@
             android:id="@+id/reservation_send_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
+            android:layout_marginStart="15sp"
             android:hint="@string/datePlaceHolder"
             android:textAlignment="textStart"
-            android:textSize="18sp"
-            android:layout_marginStart="21dp"/>
+            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -105,24 +102,22 @@
             android:textSize="20sp" />
 
 
-
-
         <TextView
             android:id="@+id/reservation_send_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10sp"
-            android:ems="3"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="10sp"
             android:hint="@string/timePlaceHolder"
             android:importantForAutofill="no"
-            android:textSize="20sp"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textSize="20sp" />
 
         <Button
-        android:id="@+id/reservation_send_button_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SELECT TIME" />
+            android:id="@+id/reservation_send_button_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/selectTime" />
 
     </LinearLayout>
 
@@ -130,7 +125,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10sp"
-        android:layout_marginTop="15sp"
+        android:layout_marginTop="10sp"
         android:orientation="horizontal">
 
         <TextView
@@ -140,21 +135,22 @@
             android:text="@string/end"
             android:textSize="20sp" />
 
-         <TextView
-             android:id="@+id/reservation_send_end"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_marginStart="10sp"
-             android:ems="3"
-             android:hint="@string/timePlaceHolder"
-             android:importantForAutofill="no"
-            android:textSize="20sp"
-             android:textAlignment="center" />
+        <TextView
+            android:id="@+id/reservation_send_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="10sp"
+            android:hint="@string/timePlaceHolder"
+            android:importantForAutofill="no"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
         <Button
             android:id="@+id/reservation_send_button_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SELECT TIME" />
+            android:text="@string/selectTime" />
     </LinearLayout>
 
 
@@ -162,7 +158,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10sp"
-        android:layout_marginTop="15sp">
+        android:layout_marginTop="10sp">
 
         <TextView
             android:layout_width="100sp"
@@ -183,6 +179,8 @@
         android:id="@+id/reservation_send_button_reserve"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10sp"
         android:layout_marginTop="15sp"
+        android:layout_marginEnd="10sp"
         android:text="@string/reservationButton" />
 </LinearLayout>
