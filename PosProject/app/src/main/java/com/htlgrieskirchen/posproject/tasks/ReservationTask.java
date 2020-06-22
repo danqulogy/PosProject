@@ -126,13 +126,18 @@ public class ReservationTask extends AsyncTask<String, String, Reservation> {
                     con.setRequestProperty("Content-Type", "application/json");
                     Log.d("doInBackground", "finished Opening connection");
 
+                    Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
+                    TypeToken<Reservation> typeToken = new TypeToken<Reservation>() {};
+
+                    Reservation reservation = gson.fromJson(strings[1], typeToken.getType());
+
                     PrintWriter pw = new PrintWriter(con.getOutputStream());
                     pw.write(strings[1]);
                     pw.flush();
 
                     int responseCode = con.getResponseCode();
 
-                    return (responseCode == HttpURLConnection.HTTP_OK)? new Reservation(): null;
+                    return (responseCode == HttpURLConnection.HTTP_OK)? reservation: null;
                 } catch (Exception e) {
                     Log.e("doInBackground-nearestRestaurant", "GETTING failed with connection; Error-Massage: " + e.getMessage());
                     e.printStackTrace();

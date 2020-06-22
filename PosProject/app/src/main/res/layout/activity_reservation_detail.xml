@@ -19,9 +19,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="15sp"
-        android:layout_marginBottom="15sp"
         android:text="@string/loading"
         android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/reservation_detail_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25sp"
+        android:layout_marginTop="5sp"
+        android:layout_marginBottom="15sp"
+        android:text="@string/loading"
+        android:textSize="14sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -104,7 +113,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="338dp"
-        android:layout_marginTop="40sp"
+        android:layout_marginTop="20sp"
         android:orientation="horizontal"
         android:paddingHorizontal="5sp">
 
@@ -122,7 +131,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:layout_marginTop="30sp"
+        android:layout_marginTop="20sp"
         android:layout_marginEnd="30sp"
         android:text="@string/cancelReservationButton"
         android:textColor="#FF0404" />

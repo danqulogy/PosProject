@@ -41,5 +41,9 @@
     <string name="name">Name</string>
     <string name="nameForReservation">Name for Reservation</string>
     <string name="seats">Seats (e.g. 5)</string>
+    <string name="noInfos">No information available</string>
+    <string name="personsForButton">[PERSONS]</string>
+    <string name="noOpeningTimeInformation">No information about opening time</string>
+    <string name="location">Location:</string>
 
 </resources>

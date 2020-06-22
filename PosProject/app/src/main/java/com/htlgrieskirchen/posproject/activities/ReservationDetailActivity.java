@@ -1,5 +1,6 @@
 package com.htlgrieskirchen.posproject.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -76,6 +77,8 @@ public class ReservationDetailActivity extends AppCompatActivity implements Call
             tv.setText(timeFormatter.format(endTime));
             tv = findViewById(R.id.reservation_detail_persons_number);
             tv.setText(String.valueOf(reservation.getChairs()));
+            tv = findViewById(R.id.reservation_detail_code);
+            tv.setText(reservation.getId());
 
             Button button = findViewById(R.id.reservation_detail_cancel);
             button.setOnClickListener(v -> {
@@ -157,7 +160,7 @@ public class ReservationDetailActivity extends AppCompatActivity implements Call
 
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(@NonNull Bundle outState){
         super.onSaveInstanceState(outState);
 
         Bundle mapViewBundle = outState.getBundle(Config.MAPVIEW_BUNDLE_KEY);

@@ -1,11 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:importantForAutofill="no"
     android:orientation="vertical"
     tools:context=".activities.ReservationSendActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5sp"
+        android:layout_marginTop="5sp"
+        android:layout_marginEnd="5sp"
+        android:background="@drawable/customborder"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/reservation_send_restaurantinformation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10sp"
+            android:layout_marginTop="10sp"
+            android:text="@string/restaurant"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/reservation_send_opening_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20sp"
+            android:layout_marginTop="5sp"
+            android:text="@string/noOpeningTimeInformation"
+            android:textSize="18sp" />
+    </LinearLayout>
 
     <EditText
         android:id="@+id/reservation_send_name"
@@ -14,16 +42,9 @@
         android:layout_marginStart="10sp"
         android:layout_marginTop="10sp"
         android:hint="@string/name"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/reservation_send_restaurantinformation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15sp"
-        android:layout_marginTop="10sp"
-        android:text="@string/restaurant"
-        android:textSize="20sp" />
+        android:importantForAutofill="no"
+        android:inputType="textPersonName"
+        android:textSize="24sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,11 +55,11 @@
 
         <Button
             android:id="@+id/reservation_send_date_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10sp"
             android:layout_weight="1"
-            android:text="@string/setDate"/>
+            android:text="@string/setDate" />
 
     </LinearLayout>
 
@@ -64,10 +85,8 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/datePlaceHolder"
-            android:inputType="textPersonName"
             android:textAlignment="textStart"
-            android:textSize="18sp"
-            />
+            android:textSize="18sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -126,54 +145,22 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/reservatin_send_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15sp"
-            android:layout_marginTop="10sp"
-            android:layout_marginEnd="15sp"
-            android:ems="10"
-            android:hint="@string/nameForReservation"
-            android:importantForAutofill="no"
-            android:inputType="textPersonName"
-            android:textSize="20sp" />
-
-        <EditText
-            android:id="@+id/reservation_send_seats"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10sp"
-            android:layout_marginEnd="15sp"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/seats"
-            android:importantForAutofill="no"
-            android:inputType="textPersonName"
-            android:textAlignment="center"
-            android:textSize="20sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
         android:layout_marginStart="10sp"
-        android:layout_marginTop="15sp"
-        android:layout_height="wrap_content">
+        android:layout_marginTop="15sp">
+
         <TextView
             android:layout_width="100sp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10sp"
             android:text="@string/persons"
-            android:textSize="20sp"
-            android:layout_marginEnd="10sp"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/reservation_send_persons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="[PERSONS]"
-            android:textSize="20sp"/>
+            android:text="@string/personsForButton"
+            android:textSize="20sp" />
 
         <Spinner
             android:id="@+id/reservation_send_persons_spinner"

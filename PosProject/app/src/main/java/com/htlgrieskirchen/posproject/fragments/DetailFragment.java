@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -27,12 +28,15 @@ import com.htlgrieskirchen.posproject.Config;
 import com.htlgrieskirchen.posproject.R;
 import com.htlgrieskirchen.posproject.activities.DetailActivity;
 import com.htlgrieskirchen.posproject.activities.ReservationSendActivity;
+import com.htlgrieskirchen.posproject.beans.Reservation;
 import com.htlgrieskirchen.posproject.beans.Restaurant;
+import com.htlgrieskirchen.posproject.handlers.ReservationHandler;
 import com.htlgrieskirchen.posproject.tasks.RestaurantTask;
 
 public class DetailFragment extends Fragment implements OnMapReadyCallback {
 
     private TextView tvName;
+    private TextView tvInfo;
     private Button reserve;
     private Restaurant restaurant;
     MapView mMapView;
@@ -47,9 +51,6 @@ public class DetailFragment extends Fragment implements OnMapReadyCallback {
             Intent intent = new Intent(getActivity(), ReservationSendActivity.class);
             intent.putExtra("restaurant", restaurant);
             startActivityForResult(intent, Config.RQ_RESERVATION_INTENT);
-
-            //result should be pushed to server (Reservation id should be saved on de device)
-            //ReservationId is specific and the id reservations(and the id) should be shown in my Reservations
         });
 
         return view;
@@ -60,16 +61,21 @@ public class DetailFragment extends Fragment implements OnMapReadyCallback {
         if(requestCode == Config.RQ_RESERVATION_INTENT && resultCode == Activity.RESULT_OK){
             String response = data.getStringExtra("response");
             Toast.makeText(getActivity(), response, Toast.LENGTH_LONG).show();
+
+            Reservation reservation = data.getParcelableExtra("reservation");
+            if(reservation != null) ReservationHandler.addReservation(reservation);
         }
     }
 
     private void initializeView(View view){
         tvName = view.findViewById(R.id.detail_fragment_name);
+        tvInfo = view.findViewById(R.id.detail_fragment_info);
     }
 
     public void showInformation(Restaurant restaurant){
         this.restaurant = restaurant;
         tvName.setText(restaurant.getName());
+        tvInfo.setText(restaurant.getInfos());
     }
 
 
@@ -107,7 +113,7 @@ public class DetailFragment extends Fragment implements OnMapReadyCallback {
 
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(@NonNull Bundle outState){
         super.onSaveInstanceState(outState);
 
         Bundle mapViewBundle = outState.getBundle(Config.MAPVIEW_BUNDLE_KEY);

@@ -25,7 +25,7 @@ public class RestaurantInfoHandler {
             List<RestaurantInfo> outputList = new ArrayList<>();
 
             for(RestaurantInfo r: restaurantInfos){
-                outputList.add(new RestaurantInfo(r.getDbId(), r.getName()));
+                outputList.add(new RestaurantInfo(r.getRestaurantNumber(), r.getName()));
             }
 
             String json = gson.toJson(outputList);
@@ -50,18 +50,18 @@ public class RestaurantInfoHandler {
     }
 
     public static void addRestaurantInfo(Restaurant restaurant){
-        restaurantInfos.add(new RestaurantInfo(restaurant.getId(), restaurant.getName(), restaurant));
+        restaurantInfos.add(new RestaurantInfo(restaurant.getRestaurantNumber(), restaurant.getName(), restaurant));
     }
 
     public static void deleteRestaurantInfo(RestaurantInfo info){
         for(RestaurantInfo r: restaurantInfos){
-            if(r.getDbId().equals(info.getDbId())) restaurantInfos.remove(r);
+            if(r.getRestaurantNumber() == info.getRestaurantNumber()) restaurantInfos.remove(r);
         }
     }
 
     public static void addRestaurantToInfo(Restaurant restaurant){
         for(RestaurantInfo r: restaurantInfos){
-            if(r.getDbId().equals(restaurant.getId())) r.setRestaurant(restaurant);
+            if(r.getRestaurantNumber() == restaurant.getRestaurantNumber()) r.setRestaurant(restaurant);
         }
     }
 

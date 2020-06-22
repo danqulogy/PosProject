@@ -244,6 +244,35 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
                     Log.d("doInBackground", "GETALL went wrong error massage: " + ex.getMessage());
                 }
                 break;
+            case "GETBYNUMBER":
+                try {
+                    Log.d("doInBackground", "Opening connection");
+                    URL url = new URL(Config.SERVER_URL + Config.RESTAURANT_BY_RESTAURANT_NUMBER+ strings[1]);
+                    Log.d("doInBackground", "URL: " + url.toString());
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("GET");
+                    Log.d("doInBackground", "finished Opening connection");
+
+                    int x;
+                    InputStream is = con.getInputStream();
+                    StringBuilder sb = new StringBuilder();
+                    while ((x = is.read()) != -1) {
+                        sb.append((char) x);
+                    }
+
+                    Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) -> LocalDateTime.parse(json.getAsString(), DateTimeFormatter.ofPattern("d.M.yyyy HH:mm"))).create();
+                    TypeToken<Restaurant> typeToken = new TypeToken<Restaurant>() {};
+
+                    Restaurant tempRestaurant = gson.fromJson(sb.toString(), typeToken.getType());
+
+                    List<Restaurant> result = new ArrayList<>();
+                    result.add(tempRestaurant);
+
+                    return result;
+                } catch (IOException ex) {
+                    Log.d("doInBackground", "Restaurant Number went wrong error massage: " + ex.getMessage());
+                }
+                break;
         }
 
         return null;
@@ -267,6 +296,11 @@ public class RestaurantTask extends AsyncTask<String, String, List<Restaurant>> 
                 case "GETBYADDRESS":
                     this.callback.onFailure("An error occurred while searching for this address");
                     break;
+                case "PUT":
+                    this.callback.onFailure("An error occurred with your reservation, please try again!");
+                    break;
+                default:
+                    this.callback.onFailure("An error occurred, please try again!");
             }
         }
     }

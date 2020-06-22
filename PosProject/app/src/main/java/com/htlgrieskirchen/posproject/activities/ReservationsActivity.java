@@ -40,12 +40,6 @@ public class ReservationsActivity extends AppCompatActivity implements CallbackR
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservations);
 
-        try {
-            ReservationHandler.readReservations(openFileInput(Config.FILE_RESERVATIONS));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
         reservations = ReservationHandler.getReservationList();
         if(reservations == null){
             reservations = new ArrayList<>();

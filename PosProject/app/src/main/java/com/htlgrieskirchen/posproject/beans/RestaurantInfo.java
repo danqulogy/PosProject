@@ -2,27 +2,27 @@ package com.htlgrieskirchen.posproject.beans;
 
 public class RestaurantInfo {
 
-    private String dbId;
+    private int restaurantNumber;
     private String name;
     private Restaurant restaurant;
 
-    public RestaurantInfo(String dbId, String name) {
-        this.dbId = dbId;
+    public RestaurantInfo(int restaurantNumber, String name) {
+        this.restaurantNumber = restaurantNumber;
         this.name = name;
     }
 
-    public RestaurantInfo(String dbId, String name, Restaurant restaurant) {
-        this.dbId = dbId;
+    public RestaurantInfo(int restaurantNumber, String name, Restaurant restaurant) {
+        this.restaurantNumber = restaurantNumber;
         this.name = name;
         this.restaurant = restaurant;
     }
 
-    public String getDbId() {
-        return dbId;
+    public int getRestaurantNumber() {
+        return restaurantNumber;
     }
 
-    public void setDbId(String dbId) {
-        this.dbId = dbId;
+    public void setRestaurantNumber(int restaurantNumber) {
+        this.restaurantNumber = restaurantNumber;
     }
 
     public String getName() {

@@ -52,7 +52,7 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
             RestaurantInfo info = RestaurantInfoHandler.getRestaurantInfos().get(position);
 
             RestaurantTask task = new RestaurantTask(callback);
-            task.execute("DBID", info.getDbId());
+            task.execute("GETBYNUMBER", String.valueOf(info.getRestaurantNumber()));
 
 
         });
@@ -94,7 +94,7 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
 
     @Override
     public void onSuccess(String method, List<Restaurant> restaurants) {
-        if(method.equals("DBID")){
+        if(method.equals("GETBYNUMBER")){
             RestaurantInfoHandler.addRestaurantToInfo(restaurants.get(0));
 
             Intent intent = new Intent(this, DetailActivity.class);
@@ -106,7 +106,7 @@ public class FavPlacesActivity extends AppCompatActivity implements CallbackRest
                 boolean b = true;
                 //For a non redundant list
                 for(RestaurantInfo r: RestaurantInfoHandler.getRestaurantInfos()){
-                    if (r.getDbId().equals(restaurant.getId())) {
+                    if (r.getRestaurantNumber() == restaurant.getRestaurantNumber()) {
                         b = false;
                         break;
                     }

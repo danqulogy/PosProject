@@ -55,5 +55,7 @@ public class Config {
     //URL for restaurants by address
     public static String RESTAURANT_GET_BY_ADDRESS_URL1 = "restaurants/getTenNearestRestaurantsByAddress?address=";
     public static String RESTAURANT_GET_BY_ADDRESS_URL2 = "&distance=";
+    //URL for restaurant by restaurantNumber
+    public static String RESTAURANT_BY_RESTAURANT_NUMBER = "restaurants/getByRestaurantNumber?restaurantNumber=";
 
 }
