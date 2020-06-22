@@ -73,6 +73,7 @@ public class ReservationRestController {
             if (tableIndex > -1) {
                 restaurant.getTables().get(tableIndex).getReservations().add(new Reservation(reservationDto.getRestaurantNumber(), String.valueOf(tableIndex + 1), reservationDto.getId(), reservationDto.getName(), reservationDto.getChairs(), reservationDto.getReservationStart(), reservationDto.getReservationEnd()));
                 reservationDto.setTableNumber(String.valueOf(tableIndex+1));
+                restaurantRepository.save(restaurant);
                 return reservationDto;
             } else return null;
         }
