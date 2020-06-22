@@ -226,9 +226,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
 
     private void setPreferenceChangeListener(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("themes")) {
-            int theme = Integer.parseInt(sharedPreferences.getString(key, 0 + ""));
-        }
+
     }
 
     @Override
@@ -252,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 else mainFragment.updateLV(restaurants);
                 break;
             case "NEAREST":
-                if (restaurants == null)
+                if (restaurants == null || restaurants.size() == 0)
                     Toast.makeText(this, "There is no Restaurant around in the selected radius", Toast.LENGTH_LONG).show();
                 else mainFragment.updateLV(restaurants);
                 break;
