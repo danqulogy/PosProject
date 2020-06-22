@@ -16,13 +16,24 @@
         android:textSize="24sp" />
 
     <TextView
+        android:id="@+id/main_lv_item_persons_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5sp"
+        android:ems="1"
+        android:text="@string/intPlaceholder"
+        android:textSize="24sp" />
+
+    <TextView
         android:id="@+id/main_lv_item_persons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5sp"
         android:layout_marginBottom="10sp"
         android:layout_weight="1"
-        android:text="@string/placeholder"
+        android:paddingStart="5sp"
+        android:paddingEnd="0sp"
+        android:text="@string/persons"
         android:textSize="24sp" />
 
 </LinearLayout>

@@ -50,7 +50,7 @@ public class TableAdapter extends BaseAdapter {
 
         View listItem = (convertView == null)? inflater.inflate(this.layoutId, null): convertView;
         ((TextView) listItem.findViewById(R.id.main_lv_item_table)).setText(String.format(resources.getString(R.string.tableItem), table.getId()));
-        ((TextView) listItem.findViewById(R.id.main_lv_item_persons)).setText(String.format(resources.getString(R.string.persons), table.getChairsAvailable()));
+        ((TextView) listItem.findViewById(R.id.main_lv_item_persons_amount)).setText(String.valueOf(table.getChairsAvailable()));
 
         return listItem;
     }
