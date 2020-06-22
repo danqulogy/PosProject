@@ -69,9 +69,8 @@ public class ReservationActivity extends AppCompatActivity implements CallbackRe
             Toast.makeText(ReservationActivity.this, "Reservation canceled", Toast.LENGTH_LONG).show();
 
             Intent returnIntent = new Intent();
-            returnIntent.putExtra("response", "delete");
             returnIntent.putExtra("reservation", deleteReservation);
-            setResult(Config.RQ_RESERVATION_INTENT, returnIntent);
+            setResult(Activity.RESULT_OK, returnIntent);
             finish();
         }
     }

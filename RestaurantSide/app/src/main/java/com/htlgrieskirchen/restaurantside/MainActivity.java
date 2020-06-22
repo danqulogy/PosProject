@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements RestaurantCallbac
         listView = findViewById(R.id.main_lv);
         listView.setOnItemClickListener((parent, view, position, id) -> {
             Intent intent = new Intent(MainActivity.this, TableActivity.class);
+            tables = RestaurantHandler.getRestaurant().getTables();
             intent.putExtra("table", tables.get(position));
             startActivity(intent);
         });

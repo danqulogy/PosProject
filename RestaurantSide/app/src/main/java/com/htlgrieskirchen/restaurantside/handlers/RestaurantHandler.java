@@ -19,10 +19,8 @@ public class RestaurantHandler {
     }
 
     public static void deleteReservation(Reservation reservation){
-        for(Table t:  restaurant.getTables()){
-            if(t.getId() == reservation.getTableNumber()){
-                t.getReservations().remove(reservation);
-            }
+        for(int i = 0; i < restaurant.getTables().size(); i ++){
+            if(restaurant.getTables().get(i).getId() == reservation.getTableNumber()) restaurant.getTables().get(i).getReservations().remove(reservation);
         }
     }
 
@@ -32,5 +30,12 @@ public class RestaurantHandler {
                 t.getReservations().add(reservation);
             }
         }
+    }
+
+    public static Table getTableById(int id){
+        for(Table t: restaurant.getTables()){
+            if(t.getId() == id) return t;
+        }
+        return restaurant.getTables().get(id-1);
     }
 }

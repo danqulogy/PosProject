@@ -40,6 +40,7 @@ import java.lang.reflect.Type;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TableActivity extends AppCompatActivity implements CallbackReservation {
@@ -57,17 +58,17 @@ public class TableActivity extends AppCompatActivity implements CallbackReservat
 
         table = getIntent().getParcelableExtra("table");
 
-        ((TextView)findViewById(R.id.activity_table_name)).setText("Table "+table.getId());
+        ((TextView) findViewById(R.id.activity_table_name)).setText("Table " + table.getId());
         listView = findViewById(R.id.activity_table_lv);
         adapter = new ReservationAdapter(this, R.layout.reservation_lv_item, table.getReservations());
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            this.table = RestaurantHandler.getRestaurant().getTables().get(table.getId()-1);
+            this.table = RestaurantHandler.getRestaurant().getTables().get(table.getId() - 1);
 
             Intent intent = new Intent(TableActivity.this, ReservationActivity.class);
             intent.putExtra("reservation", table.getReservations().get(position));
-            startActivity(intent);
+            startActivityForResult(intent, Config.RQ_RESERVATION_INTENT);
         });
     }
 
@@ -75,15 +76,17 @@ public class TableActivity extends AppCompatActivity implements CallbackReservat
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Config.RQ_RESERVATION_INTENT && resultCode == Activity.RESULT_OK) {
-            String response = data.getStringExtra("response");
-            if(response != null && response.equals("delete")){
-                Reservation responseReservation = data.getParcelableExtra("reservation");
+            Reservation reservation = data.getParcelableExtra("reservation");
+            RestaurantHandler.deleteReservation(reservation);
+            table = RestaurantHandler.getTableById(table.getId());
 
-                table = RestaurantHandler.getRestaurant().getTables().get(responseReservation.getTableNumber()-1);
-
-                adapter = new ReservationAdapter(this, R.layout.reservation_lv_item, table.getReservations());
-                listView.setAdapter(adapter);
+            if (table == null){
+                table = new Table();
+                table.setReservations(new ArrayList<>());
             }
+
+            adapter = new ReservationAdapter(this, R.layout.reservation_lv_item, table.getReservations());
+            listView.setAdapter(adapter);
         }
     }
 
@@ -101,10 +104,10 @@ public class TableActivity extends AppCompatActivity implements CallbackReservat
 
         int itemId = item.getItemId();
 
-        if (itemId ==  R.id.table_manu_set_reserved){
+        if (itemId == R.id.table_manu_set_reserved) {
             Restaurant restaurant = RestaurantHandler.getRestaurant();
             LocalDateTime now = LocalDateTime.parse(dtf.format(LocalDateTime.now()), dtf);
-            LocalDateTime end = LocalDateTime.parse(now.plusDays(1).toLocalDate().format(date)+" 06:00", dtf);
+            LocalDateTime end = LocalDateTime.parse(now.plusDays(1).toLocalDate().format(date) + " 06:00", dtf);
             Reservation reservation = new Reservation(restaurant.getRestaurantNumber(), table.getId(), randomReservationId(), "INTERN", table.getChairsAvailable(), now, end);
 
             puttedReservation = reservation;
@@ -128,13 +131,13 @@ public class TableActivity extends AppCompatActivity implements CallbackReservat
         return super.onOptionsItemSelected(item);
     }
 
-    private String randomReservationId(){
+    private String randomReservationId() {
         final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
         SecureRandom secureRandom = new SecureRandom();
         StringBuilder sb = new StringBuilder();
 
-        for(int i = 0 ; i < 12; i++){
+        for (int i = 0; i < 12; i++) {
             int randomIndex = secureRandom.nextInt(chars.length());
             sb.append(chars.charAt(randomIndex));
         }
@@ -144,14 +147,14 @@ public class TableActivity extends AppCompatActivity implements CallbackReservat
 
     @Override
     public void onSuccess(String method, Reservation reservation) {
-        if(method.equals("PUT") && reservation != null){
+        if (method.equals("PUT") && reservation != null) {
             Toast.makeText(this, "Table set as reserved", Toast.LENGTH_LONG).show();
 
             RestaurantHandler.addReservation(puttedReservation);
-            adapter = new ReservationAdapter(this, R.layout.reservation_lv_item, RestaurantHandler.getRestaurant().getTables().get(puttedReservation.getTableNumber()-1).getReservations());
+            adapter = new ReservationAdapter(this, R.layout.reservation_lv_item, RestaurantHandler.getRestaurant().getTables().get(puttedReservation.getTableNumber() - 1).getReservations());
             listView.setAdapter(adapter);
 
-        }else{
+        } else {
             Toast.makeText(this, "Something went wrong please try again", Toast.LENGTH_LONG).show();
         }
     }

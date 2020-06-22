@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Reservation implements Parcelable{
 
@@ -120,5 +121,24 @@ public class Reservation implements Parcelable{
         dest.writeInt(chairs);
         dest.writeSerializable(reservationStart);
         dest.writeSerializable(reservationEnd);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reservation that = (Reservation) o;
+        return restaurantNumber == that.restaurantNumber &&
+                tableNumber == that.tableNumber &&
+                chairs == that.chairs &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(reservationStart, that.reservationStart) &&
+                Objects.equals(reservationEnd, that.reservationEnd);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(restaurantNumber, tableNumber, id, name, chairs, reservationStart, reservationEnd);
     }
 }
