@@ -44,40 +44,45 @@ public class ReservationRestController {
     @PutMapping("/addReservation")
     public ReservationDto addReservation(@RequestBody ReservationDto reservationDto) {
         Restaurant restaurant = restaurantRepository.findByRestaurantNumber(reservationDto.getRestaurantNumber());
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-                    LocalDateTime start = LocalDateTime.parse(reservationDto.getReservationStart(), dtf);
-                    LocalDateTime end = LocalDateTime.parse(reservationDto.getReservationEnd(), dtf);
-                    List<Reservation> reservations = new ArrayList<>();
-                    List<String> tables = new ArrayList<>();
-                    restaurant.getTables().stream()
-                            .sorted((Comparator.comparingInt(t -> Integer.parseInt(t.getChairsAvailable()))))
-                            .filter(t -> Integer.parseInt(t.getChairsAvailable()) >= Integer.parseInt(reservationDto.getChairs())).forEach(t -> reservations.addAll(t.getReservations()));
-                    for (Reservation r :
-                            reservations) {
-                        //a.start < b.end && b.start < a.end
-                        LocalDateTime startR = LocalDateTime.parse(r.getReservationStart(), dtf);
-                        LocalDateTime endR = LocalDateTime.parse(r.getReservationEnd(), dtf);
-                        boolean overlap = start.isBefore(endR) && startR.isBefore(end);
-                        if (overlap) {
-                            if (tables.contains(r.getTableNumber())) {
-                                tables.remove(r.getTableNumber());
-                            }
-                        } else if (!overlap) {
-                            if (tables.contains(r.getTableNumber())) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime start = LocalDateTime.parse(reservationDto.getReservationStart(), dtf);
+        LocalDateTime end = LocalDateTime.parse(reservationDto.getReservationEnd(), dtf);
+        List<Reservation> reservations = new ArrayList<>();
+        List<String> tables = new ArrayList<>();
+        restaurant.getTables().stream()
+                .sorted((Comparator.comparingInt(t -> Integer.parseInt(t.getChairsAvailable()))))
+                .filter(t -> Integer.parseInt(t.getChairsAvailable()) >= Integer.parseInt(reservationDto.getChairs())).forEach(t -> reservations.addAll(t.getReservations()));
+        for (Reservation r :
+                reservations) {
+            //a.start < b.end && b.start < a.end
+            LocalDateTime startR = LocalDateTime.parse(r.getReservationStart(), dtf);
+            LocalDateTime endR = LocalDateTime.parse(r.getReservationEnd(), dtf);
+            boolean overlap = start.isBefore(endR) && startR.isBefore(end);
+            if (overlap) {
+                if (tables.contains(r.getTableNumber())) {
+                    tables.remove(r.getTableNumber());
+                }
+            } else if (!overlap) {
+                if (tables.contains(r.getTableNumber())) {
 
-                            } else {
+                } else {
                     tables.add(r.getTableNumber());
                 }
             }
             int tableIndex = Integer.parseInt(tables.stream().findFirst().orElse("-1")) - 1;
             if (tableIndex > -1) {
                 restaurant.getTables().get(tableIndex).getReservations().add(new Reservation(reservationDto.getRestaurantNumber(), String.valueOf(tableIndex + 1), reservationDto.getId(), reservationDto.getName(), reservationDto.getChairs(), reservationDto.getReservationStart(), reservationDto.getReservationEnd()));
-                reservationDto.setTableNumber(String.valueOf(tableIndex+1));
+                reservationDto.setTableNumber(String.valueOf(tableIndex + 1));
                 restaurantRepository.save(restaurant);
                 return reservationDto;
             } else return null;
         }
-        return null;
+        int tableIndex = Integer.parseInt(restaurant.getTables().stream().sorted((Comparator.comparingInt(t -> Integer.parseInt(t.getChairsAvailable())))).filter(t -> Integer.parseInt(t.getChairsAvailable()) >= Integer.parseInt(reservationDto.getChairs())
+        ).findFirst().orElse(null).getId()) - 1;
+        restaurant.getTables().get(tableIndex).getReservations().add(new Reservation(reservationDto.getRestaurantNumber(), String.valueOf(tableIndex + 1), reservationDto.getId(), reservationDto.getName(), reservationDto.getChairs(), reservationDto.getReservationStart(), reservationDto.getReservationEnd()));
+        reservationDto.setTableNumber(String.valueOf(tableIndex + 1));
+        restaurantRepository.save(restaurant);
+        return reservationDto;
     }
 }
 
